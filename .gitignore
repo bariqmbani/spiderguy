@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+supabase/functions/.env
+supabase/.temp/
+supabase/.branches/
+*.local
+.DS_Store
+playwright-report/
+test-results/
+tmp/
+# Trained embedding artifacts are rebuilt by `pnpm embed:train`; only the pruned model ships.
+packages/embeddings/work/

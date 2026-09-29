@@ -1,0 +1,6 @@
+packages:
+  - apps/*
+  - packages/*
+allowBuilds:
+  word2vec: true
+  esbuild: true

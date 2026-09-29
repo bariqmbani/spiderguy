@@ -1,0 +1,27 @@
+{
+  "name": "shapeshift-workspace",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @app/web dev",
+    "build": "pnpm --filter @app/web build",
+    "lint": "pnpm --filter @app/web lint",
+    "typecheck": "pnpm --filter @app/web typecheck && pnpm run typecheck:functions",
+    "typecheck:functions": "deno check --config supabase/functions/api/deno.json supabase/functions/api/index.ts",
+    "test": "vitest run",
+    "test:functions": "deno test --config supabase/functions/api/deno.json --allow-env supabase/functions/api/shared",
+    "test:db": "docker exec -i supabase_db_hackathon-spiderguy psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q < supabase/tests/db/rls_test.sql",
+    "test:api": "node --env-file=.env.test scripts/api-test.mjs",
+    "functions:serve": "supabase functions serve api --no-verify-jwt --env-file supabase/functions/.env",
+    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm test:functions && pnpm build"
+  },
+  "devDependencies": {
+    "vitest": "3.2.4",
+    "zod": "3.25.76"
+  }
+}
