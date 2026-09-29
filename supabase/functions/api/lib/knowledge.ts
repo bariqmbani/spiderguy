@@ -84,6 +84,7 @@ const SCHEMAS = {
 } as const;
 
 export const PROMPT_VERSIONS = { answer: "answer-v1", summary: "summary-v1", email: "email-v1" } as const;
+const SUSPICIOUS = /\b(ignore|disregard|forget)\b.{0,40}\b(instructions?|prompts?|rules)\b|\bsystem prompt\b|\bjailbreak\b/i;
 
 type Out = { answer?: string; summary?: string; subject?: string; body?: string; abstained?: boolean; citations: { chunk_id: string; quote: string }[] };
 
@@ -139,7 +140,6 @@ export async function generate(ctx: Ctx, body: unknown) {
     return { ...base, answer: "I couldn't find anything in this workspace that answers that.", abstained: true, citations: [], private_required: false, dependencies: [], model: null };
   }
 
-  const passages = renderEvidence(evidence);
   const task = req.task === "answer"
     ? `Question: ${req.query || req.instruction}`
     : req.task === "summary"
@@ -147,14 +147,31 @@ export async function generate(ctx: Ctx, body: unknown) {
     : `Write an email draft. Instruction: ${req.instruction || "(none)"}\nTone: ${req.draft_fields?.tone ?? "neutral"}\n` +
       `Do not invent recipients, email addresses, links, or facts that are not in the passages. Do not include a signature with a made-up name.` +
       (evidence.length ? "" : "\nNo passages are available; write only from the instruction and return no citations.");
-  const user = `${passages ? `${passages}\n\n` : ""}${task}`;
+  let excluded = 0;
+  const prompt = () => {
+    const passages = renderEvidence(evidence);
+    return `${passages ? `${passages}\n\n` : ""}${task}`;
+  };
+  let user = prompt();
 
   let out: Out | null = null;
   let model = "";
   let cites: ValidCitation[] = [];
   let feedback = "";
   for (let attempt = 0; attempt < 2 && !out; attempt++) {
-    const r = await chatJson<Out>(SYSTEM, feedback ? `${user}\n\nYour previous output was rejected: ${feedback}. Fix it.` : user, `${req.task}_output`, SCHEMAS[req.task]);
+    let r;
+    try {
+      r = await chatJson<Out>(SYSTEM, feedback ? `${user}\n\nYour previous output was rejected: ${feedback}. Fix it.` : user, `${req.task}_output`, SCHEMAS[req.task]);
+    } catch (e) {
+      // Provider safety filters can block retrieved jailbreak text; retry once without instruction-like passages.
+      const kept = evidence.filter((x) => !SUSPICIOUS.test(x.content));
+      if ((e as HttpError).code !== "CONTENT_FILTERED" || excluded || kept.length === evidence.length) throw e;
+      excluded = evidence.length - kept.length;
+      evidence = kept;
+      user = prompt();
+      attempt--;
+      continue;
+    }
     model = r.model;
     const v = validateCitations(r.value.citations ?? [], evidence);
     const text = r.value.answer ?? r.value.summary ?? r.value.body ?? "";
@@ -178,7 +195,7 @@ export async function generate(ctx: Ctx, body: unknown) {
   await recheck(ctx, req.workspace_id, evidence);
   const deps = [...new Map(evidence.map((e) => [e.source_id, { source_id: e.source_id, revision_id: e.revision_id }])).values()];
   const private_required = evidence.some((e) => e.visibility !== "workspace");
-  const common = { ...base, citations: cites, dependencies: deps, private_required, model };
+  const common = { ...base, citations: cites, dependencies: deps, private_required, model, excluded_passages: excluded };
   if (req.task === "answer") return { ...common, answer: out.answer, abstained: !!out.abstained && cites.length === 0 };
   if (req.task === "summary") return { ...common, summary: out.summary, abstained: !!out.abstained && cites.length === 0 };
   return { ...common, to: req.draft_fields?.to ?? [], cc: req.draft_fields?.cc ?? [], subject: out.subject, body: out.body };

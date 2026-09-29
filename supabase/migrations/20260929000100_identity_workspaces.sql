@@ -73,9 +73,10 @@ create index audit_events_workspace on public.audit_events (workspace_id, create
 -- Owner consistency: the workspace owner_id always has the single active owner membership.
 create function private.check_owner_consistency() returns trigger
 language plpgsql security definer set search_path = '' as $$
-declare ws uuid := coalesce(new.workspace_id, old.workspace_id);
+declare
+  r jsonb := to_jsonb(coalesce(new, old));
+  ws uuid := case when tg_table_name = 'workspaces' then (r ->> 'id')::uuid else (r ->> 'workspace_id')::uuid end;
 begin
-  if tg_table_name = 'workspaces' then ws := coalesce(new.id, old.id); end if;
   if exists (select 1 from public.workspaces w where w.id = ws)
      and not exists (
        select 1 from public.workspaces w join public.memberships m

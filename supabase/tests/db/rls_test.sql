@@ -302,5 +302,7 @@ begin
   execute 'reset role';
 end $$;
 
+-- Fire pending deferred constraint triggers now; the final rollback would otherwise skip them.
+set constraints all immediate;
 select 'ALL DB TESTS PASSED' as result;
 rollback;

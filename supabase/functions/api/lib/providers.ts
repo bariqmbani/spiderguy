@@ -93,7 +93,12 @@ export async function chatJson<T>(system: string, user: string, name: string, sc
     }),
   }, 45000);
   if (!res.ok) {
-    await res.body?.cancel();
+    const err = await res.json().catch(() => ({})) as { error?: { code?: string; innererror?: { code?: string } } };
+    const code = err.error?.innererror?.code ?? err.error?.code ?? "";
+    if (code === "content_filter" || code === "ResponsibleAIPolicyViolation") {
+      throw new HttpError(422, "CONTENT_FILTERED", "the model provider's safety filter blocked this request; rephrase or remove sources");
+    }
+    console.error(JSON.stringify({ provider: "llm", status: res.status, code: String(code).slice(0, 64) }));
     throw new HttpError(503, "PROVIDER_UNAVAILABLE", `language model returned ${res.status}`, res.status === 429 || res.status >= 500);
   }
   const body = await res.json() as { model?: string; usage?: unknown; choices?: { message?: { content?: string; refusal?: string }; finish_reason?: string }[] };

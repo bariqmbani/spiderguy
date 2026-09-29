@@ -21,6 +21,7 @@
     "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm test:functions && pnpm build"
   },
   "devDependencies": {
+    "@supabase/supabase-js": "2.117.2",
     "vitest": "3.2.4",
     "zod": "3.25.76"
   }

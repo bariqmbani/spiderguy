@@ -2,6 +2,7 @@ import { z } from "zod";
 import { actionExecuteRequest, actionPrepareRequest, emailSchema, eventSchema, uuid } from "../shared/schemas.ts";
 import { isValidTimeZone } from "../shared/parse.ts";
 import { chunkText, decodeUtf8Strict, normalizeText } from "../shared/chunk.ts";
+import { buildMime } from "../shared/mime.ts";
 import { admin, type Ctx, dbError, HttpError, parseWith, rateLimit, requireMember, requireSecret, secret } from "./core.ts";
 
 export const SCOPES = {
@@ -246,26 +247,6 @@ export async function sourceRefresh(ctx: Ctx, body: unknown) {
 }
 
 // ---- Confirmed external actions ----
-
-function encodeHeader(v: string): string {
-  if (/[\r\n]/.test(v)) throw new HttpError(422, "INVALID_INPUT", "header values cannot contain line breaks");
-  return /^[\x20-\x7e]*$/.test(v) ? v : `=?UTF-8?B?${b64(new TextEncoder().encode(v))}?=`;
-}
-
-export function buildMime(p: z.infer<typeof emailSchema>): string {
-  const body = b64(new TextEncoder().encode(p.body)).replace(/.{76}/g, "$&\r\n");
-  const lines = [
-    `To: ${p.to.map(encodeHeader).join(", ")}`,
-    ...(p.cc?.length ? [`Cc: ${p.cc.map(encodeHeader).join(", ")}`] : []),
-    `Subject: ${encodeHeader(p.subject)}`,
-    "MIME-Version: 1.0",
-    'Content-Type: text/plain; charset="UTF-8"',
-    "Content-Transfer-Encoding: base64",
-    "",
-    body,
-  ];
-  return lines.join("\r\n");
-}
 
 function canonical(kind: string, payload: Record<string, unknown>) {
   if (kind === "gmail_draft") {
