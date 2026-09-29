@@ -39,3 +39,37 @@ Never edit applied migrations in shared environments. Add forward migrations; do
 ## Context and handoff
 
 Update docs/STATUS.md after each work session: active task; completed requirement IDs; commits; test evidence; decisions; known failures; next exact action. Keep design rationale in ADRs and durable product facts in specs, not only chat or an agent scratchpad. Do not record credentials or personal customer data. Do not delegate to additional agents unless the user or repository instructions authorize it.
+
+<!-- rtk-instructions v2 -->
+# Command output
+
+Command output here is condensed to save tokens, keeping every signal and
+dropping costly noise. Treat it as the complete result: run commands
+normally, and batch related commands into one call to avoid extra turns.
+Truncated results state their recovery path in their own output. Re-run a
+command as `rtk proxy <cmd>` only when its result is unusable: empty when
+output was clearly expected, contradicting its exit code, or garbled.
+<!-- /rtk-instructions -->
+
+## Graphify - Codebase context & knowledge graph protocol
+
+A pre-computed AST knowledge graph (`graph.json`) is available at: `graphify-out/graph.json`
+Use `graph.json` before searching or reading multiple source files.
+
+Workflow:
+1. Read `graph.json`.
+2. Identify the relevant symbols, files, and dependency paths.
+3. Read only the source files required for the task.
+4. Avoid scanning unrelated files.
+
+Use the graph for:
+- dependency tracing
+- call-path discovery
+- identifying high-centrality modules
+- impact analysis before refactoring
+- locating symbol definitions
+
+Never read an entire directory simply to locate a symbol. Use `graph.json` to locate the symbol first, then read only the relevant files.
+
+The graph is generated from AST extraction and represents extracted structural relationships only. Treat graph edges as authoritative for structural relationships.
+Do not infer dependencies that are absent from the graph.

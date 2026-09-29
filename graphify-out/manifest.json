@@ -1,0 +1,104 @@
+{
+  "AGENTS.md": {
+    "mtime": 1790660289.9658346,
+    "seen": 1790660608.0826995,
+    "ast_hash": "db8699bf60317d99f2c46c8da6d6cf7f",
+    "semantic_hash": "db8699bf60317d99f2c46c8da6d6cf7f"
+  },
+  "README.md": {
+    "mtime": 1790665272.0,
+    "seen": 1790660608.0827115,
+    "ast_hash": "eca5b07e55664183f7bd1a4a4cf49beb",
+    "semantic_hash": "eca5b07e55664183f7bd1a4a4cf49beb"
+  },
+  "docs/API_CONTRACTS.md": {
+    "mtime": 1790665296.0,
+    "seen": 1790660608.0827165,
+    "ast_hash": "0376a273ebcafd3dbac28ce4fb939ee5",
+    "semantic_hash": "0376a273ebcafd3dbac28ce4fb939ee5"
+  },
+  "docs/ARCHITECTURE.md": {
+    "mtime": 1790665272.0,
+    "seen": 1790660608.0827193,
+    "ast_hash": "0bb435ac9ebc0a8da966b3a02213da7d",
+    "semantic_hash": "0bb435ac9ebc0a8da966b3a02213da7d"
+  },
+  "docs/DATA_MODEL.md": {
+    "mtime": 1790665296.0,
+    "seen": 1790660608.0827217,
+    "ast_hash": "cf620758c47a4807b926fde15db139af",
+    "semantic_hash": "cf620758c47a4807b926fde15db139af"
+  },
+  "docs/IMPLEMENTATION_PLAN.md": {
+    "mtime": 1790665272.0,
+    "seen": 1790660608.0827239,
+    "ast_hash": "09d003c3c23b386ace17dd3cf30553ab",
+    "semantic_hash": "09d003c3c23b386ace17dd3cf30553ab"
+  },
+  "docs/PRODUCT.md": {
+    "mtime": 1790665272.0,
+    "seen": 1790660608.0827265,
+    "ast_hash": "6c1bd97835ab0e8f4574971958898173",
+    "semantic_hash": "6c1bd97835ab0e8f4574971958898173"
+  },
+  "docs/REQUIREMENTS.md": {
+    "mtime": 1790665272.0,
+    "seen": 1790660608.0827284,
+    "ast_hash": "904fc983ab3194e218ce0488c67f1c1e",
+    "semantic_hash": "904fc983ab3194e218ce0488c67f1c1e"
+  },
+  "docs/SECURITY_OPERATIONS.md": {
+    "mtime": 1790665272.0,
+    "seen": 1790660608.0827305,
+    "ast_hash": "c3cac69ff4f7a63e41836977e835232f",
+    "semantic_hash": "c3cac69ff4f7a63e41836977e835232f"
+  },
+  "docs/SOURCES.md": {
+    "mtime": 1790665272.0,
+    "seen": 1790660608.0827332,
+    "ast_hash": "15efce046339611b11110b440687e48c",
+    "semantic_hash": "15efce046339611b11110b440687e48c"
+  },
+  "docs/STATUS.md": {
+    "mtime": 1790665272.0,
+    "seen": 1790660608.0827353,
+    "ast_hash": "dde6963eddb4b11005cc4e3e72d880a8",
+    "semantic_hash": "dde6963eddb4b11005cc4e3e72d880a8"
+  },
+  "docs/UX.md": {
+    "mtime": 1790665272.0,
+    "seen": 1790660608.0827384,
+    "ast_hash": "3e62d2a361e936976294490d65aa042b",
+    "semantic_hash": "3e62d2a361e936976294490d65aa042b"
+  },
+  "docs/VERIFICATION.md": {
+    "mtime": 1790665272.0,
+    "seen": 1790660608.0827405,
+    "ast_hash": "ce252513f96a3e2a231422b41e08a262",
+    "semantic_hash": "ce252513f96a3e2a231422b41e08a262"
+  },
+  "docs/adr/0001-baseline.md": {
+    "mtime": 1790665272.0,
+    "seen": 1790660608.0827425,
+    "ast_hash": "1fdada64b9d437b2ad664d915c6e2283",
+    "semantic_hash": "1fdada64b9d437b2ad664d915c6e2283"
+  },
+  "docs/specs/GOOGLE_WORKSPACE.md": {
+    "mtime": 1790665272.0,
+    "seen": 1790660608.0827446,
+    "ast_hash": "8defac09969828308f14fff6aa998138",
+    "semantic_hash": "8defac09969828308f14fff6aa998138"
+  },
+  "docs/specs/RAG.md": {
+    "mtime": 1790665272.0,
+    "seen": 1790660608.082746,
+    "ast_hash": "50dddce2a8079cb3ebf6468745086b75",
+    "semantic_hash": "50dddce2a8079cb3ebf6468745086b75"
+  },
+  "docs/templates/CHANGE_SPEC.md": {
+    "mtime": 1790665272.0,
+    "seen": 1790660608.0827482,
+    "ast_hash": "8725bac45d4b5380ad64a22e28b6cfaa",
+    "semantic_hash": "8725bac45d4b5380ad64a22e28b6cfaa"
+  }
+}
