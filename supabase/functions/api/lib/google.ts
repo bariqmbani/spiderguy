@@ -306,16 +306,16 @@ async function findEvent(token: string, id: string): Promise<{ id: string; htmlL
 export async function actionExecute(ctx: Ctx, body: unknown) {
   const req = parseWith(actionExecuteRequest, body);
   await rateLimit(ctx, "action");
-  const { data, error } = await ctx.db.rpc("action_begin_execute", { p_action_id: req.action_id, p_payload_hash: req.payload_hash });
+  const { data, error } = await ctx.db.rpc("action_claim", { p_action_id: req.action_id, p_payload_hash: req.payload_hash });
   if (error) throw dbError(error);
-  const a = data as Action;
+  const { claimed, action: a } = data as { claimed: boolean; action: Action };
   if (a.state === "outcome_unknown" && a.kind === "calendar_event") {
     const { token } = await accessToken(ctx.user.id, "calendar");
     const found = await findEvent(token, await eventId(a.id));
     if (found && found !== "unknown") return record(a.id, "succeeded", found.id, found.htmlLink ?? null, null);
     if (found === null) return record(a.id, "failed", null, null, "NOT_CREATED");
   }
-  if (a.state !== "executing") {
+  if (!claimed) {
     return { action_id: a.id, state: a.state, provider_resource_id: a.provider_resource_id, provider_link: a.provider_link, error_code: a.error_code };
   }
   const payload = canonical(a.kind, a.payload);
