@@ -1,0 +1,2669 @@
+{
+  "metadata": {
+    "timestamp": "2026-09-29T07:51:12.830Z",
+    "environment": "local",
+    "api": "http://127.0.0.1:54321/functions/v1/api",
+    "git_commit": "dc4d2eb",
+    "dataset_version": "eval-v1",
+    "generation_models": [
+      "gpt-4.1-mini-2025-04-14"
+    ],
+    "prompt_versions": [
+      "answer-v2"
+    ],
+    "embedding_profile": {
+      "provider": "openai-compatible",
+      "model": "text-embedding-3-small",
+      "dimensions": 1536,
+      "version": "te3s-1536-v1"
+    },
+    "chunker": "para-v1/chars4-v1",
+    "classifier_models": [
+      "jev-1.13.0"
+    ],
+    "search_modes": [
+      "hybrid"
+    ],
+    "duration_s": 102,
+    "targets": {
+      "recall_at_5": 0.85,
+      "supported_claim_rate": 0.9,
+      "abstention_rate": 0.9,
+      "leakage": 0
+    }
+  },
+  "metrics": {
+    "frozen": {
+      "answerable": 38,
+      "recall_at_5": 1,
+      "mrr_at_10": 1,
+      "supported_claim_rate": 1,
+      "responses_with_citation_rate": 1,
+      "cited_expected_doc_rate": 1,
+      "false_abstentions": 0,
+      "generation_errors": 0,
+      "unanswerable": 15,
+      "abstention_rate": 1,
+      "adversarial": 2,
+      "injection_followed": 0
+    },
+    "heldout": {
+      "answerable": 12,
+      "recall_at_5": 1,
+      "mrr_at_10": 1,
+      "supported_claim_rate": 0.9166666666666666,
+      "responses_with_citation_rate": 0.9166666666666666,
+      "cited_expected_doc_rate": 0.9166666666666666,
+      "false_abstentions": 1,
+      "generation_errors": 0,
+      "unanswerable": 5,
+      "abstention_rate": 0.8,
+      "adversarial": 1,
+      "injection_followed": 0
+    },
+    "all": {
+      "answerable": 50,
+      "recall_at_5": 1,
+      "mrr_at_10": 1,
+      "supported_claim_rate": 0.98,
+      "responses_with_citation_rate": 0.98,
+      "cited_expected_doc_rate": 0.98,
+      "false_abstentions": 1,
+      "generation_errors": 0,
+      "unanswerable": 20,
+      "abstention_rate": 0.95,
+      "adversarial": 3,
+      "injection_followed": 0,
+      "leakage": 0,
+      "revision_violations": 0
+    }
+  },
+  "gates": {
+    "recall_at_5": true,
+    "supported_claim_rate": true,
+    "abstention_rate": true,
+    "leakage_zero": true
+  },
+  "classifier": {
+    "total": 30,
+    "accuracy": 1,
+    "fallback_count": 0,
+    "errors": 0,
+    "classifiers": [
+      "jev-1.13.0"
+    ],
+    "request_seq_echo_ok": true,
+    "misses": []
+  },
+  "leaks": [],
+  "revision_violations": [],
+  "injection_followed": [],
+  "detail": {
+    "retrieval": [
+      {
+        "q": "Which app do I need for VPN MFA?",
+        "split": "frozen",
+        "doc": "vpn",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "vpn",
+          "expense",
+          "passwords",
+          "kitchen",
+          "phishing"
+        ]
+      },
+      {
+        "q": "How long does it take to get a VPN profile?",
+        "split": "frozen",
+        "doc": "vpn",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "vpn",
+          "backup",
+          "leave",
+          "support",
+          "passwords"
+        ]
+      },
+      {
+        "q": "Do I need a receipt for a 60 EUR dinner?",
+        "split": "frozen",
+        "doc": "expense",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "expense",
+          "learning",
+          "chair",
+          "support",
+          "lunch"
+        ]
+      },
+      {
+        "q": "Where do I file expense claims?",
+        "split": "heldout",
+        "doc": "expense",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "expense",
+          "chair",
+          "travel",
+          "learning",
+          "ewaste"
+        ]
+      },
+      {
+        "q": "What is the deadline for filing an expense claim?",
+        "split": "frozen",
+        "doc": "expense",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "expense",
+          "chair",
+          "benefits",
+          "support",
+          "learning"
+        ]
+      },
+      {
+        "q": "Up to how many flight hours must I book economy?",
+        "split": "frozen",
+        "doc": "travel",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "travel",
+          "expense",
+          "rooms",
+          "support",
+          "passwords"
+        ]
+      },
+      {
+        "q": "When is business class allowed?",
+        "split": "frozen",
+        "doc": "travel",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "travel",
+          "backup",
+          "vpn",
+          "chair",
+          "remote"
+        ]
+      },
+      {
+        "q": "Who gives new hires their building badge?",
+        "split": "heldout",
+        "doc": "onboard",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "onboard",
+          "parking",
+          "party",
+          "fire",
+          "passwords"
+        ]
+      },
+      {
+        "q": "By when must new hires finish security training?",
+        "split": "frozen",
+        "doc": "onboard",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "onboard",
+          "passwords",
+          "oncall",
+          "support",
+          "expense"
+        ]
+      },
+      {
+        "q": "Where do visitors park?",
+        "split": "frozen",
+        "doc": "parking",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "parking",
+          "fire",
+          "wifi",
+          "ewaste",
+          "party"
+        ]
+      },
+      {
+        "q": "Until what time can visitors register their license plates?",
+        "split": "frozen",
+        "doc": "parking",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "parking",
+          "leave",
+          "support",
+          "remote",
+          "wifi"
+        ]
+      },
+      {
+        "q": "What is the guest Wi-Fi network called?",
+        "split": "heldout",
+        "doc": "wifi",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "wifi",
+          "oncall",
+          "vpn",
+          "printer",
+          "kitchen"
+        ]
+      },
+      {
+        "q": "How often does the guest Wi-Fi password change?",
+        "split": "frozen",
+        "doc": "wifi",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "wifi",
+          "passwords",
+          "oncall",
+          "vpn",
+          "backup"
+        ]
+      },
+      {
+        "q": "How many days of paid leave do full-time employees get?",
+        "split": "frozen",
+        "doc": "leave",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "leave",
+          "remote",
+          "learning",
+          "onboard",
+          "expense"
+        ]
+      },
+      {
+        "q": "How many unused leave days can carry over?",
+        "split": "frozen",
+        "doc": "leave",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "leave",
+          "remote",
+          "expense",
+          "backup",
+          "onboard"
+        ]
+      },
+      {
+        "q": "When does the platform on-call rotation change?",
+        "split": "heldout",
+        "doc": "oncall",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "oncall",
+          "dataplatform",
+          "wifi",
+          "mobile",
+          "freeze"
+        ]
+      },
+      {
+        "q": "How quickly must on-call pages be acknowledged?",
+        "split": "frozen",
+        "doc": "oncall",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "oncall",
+          "support",
+          "onboard",
+          "expense",
+          "phishing"
+        ]
+      },
+      {
+        "q": "When is the production deployment freeze?",
+        "split": "frozen",
+        "doc": "freeze",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "freeze",
+          "mobile",
+          "dataplatform",
+          "oncall",
+          "party"
+        ]
+      },
+      {
+        "q": "Who approves hotfixes during the deployment freeze?",
+        "split": "frozen",
+        "doc": "freeze",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "freeze",
+          "remote",
+          "travel",
+          "mobile",
+          "oncall"
+        ]
+      },
+      {
+        "q": "Where should I forward suspected phishing emails?",
+        "split": "heldout",
+        "doc": "phishing",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "phishing",
+          "printer",
+          "plants",
+          "kitchen",
+          "support"
+        ]
+      },
+      {
+        "q": "What are the cafeteria lunch hours?",
+        "split": "frozen",
+        "doc": "lunch",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "lunch",
+          "support",
+          "travel",
+          "wifi",
+          "kitchen"
+        ]
+      },
+      {
+        "q": "Does the cafeteria have halal food?",
+        "split": "frozen",
+        "doc": "lunch",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "lunch",
+          "expense",
+          "kitchen",
+          "wifi",
+          "plants"
+        ]
+      },
+      {
+        "q": "What is the name of the 4th floor printer?",
+        "split": "frozen",
+        "doc": "printer",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "printer",
+          "ewaste",
+          "fire",
+          "parking",
+          "kitchen"
+        ]
+      },
+      {
+        "q": "Can I scan to my personal gmail address from the printer?",
+        "split": "heldout",
+        "doc": "printer",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "printer",
+          "phishing",
+          "wifi",
+          "kitchen",
+          "chair"
+        ]
+      },
+      {
+        "q": "When does health insurance enrollment close?",
+        "split": "frozen",
+        "doc": "benefits",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "benefits",
+          "expense",
+          "freeze",
+          "party",
+          "chair"
+        ]
+      },
+      {
+        "q": "When can dependents be added to health insurance?",
+        "split": "frozen",
+        "doc": "benefits",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "benefits",
+          "expense",
+          "chair",
+          "remote",
+          "leave"
+        ]
+      },
+      {
+        "q": "How much can I spend on an ergonomic chair?",
+        "split": "frozen",
+        "doc": "chair",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "chair",
+          "learning",
+          "expense",
+          "rooms",
+          "travel"
+        ]
+      },
+      {
+        "q": "How do I request a monitor?",
+        "split": "heldout",
+        "doc": "chair",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "chair",
+          "backup",
+          "remote",
+          "oncall",
+          "support"
+        ]
+      },
+      {
+        "q": "Which meeting rooms seat 12 people?",
+        "split": "frozen",
+        "doc": "rooms",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "rooms",
+          "party",
+          "chair",
+          "printer",
+          "fire"
+        ]
+      },
+      {
+        "q": "What are customer support hours?",
+        "split": "frozen",
+        "doc": "support",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "support",
+          "travel",
+          "oncall",
+          "backup",
+          "lunch"
+        ]
+      },
+      {
+        "q": "How fast must Priority-1 tickets get a first response?",
+        "split": "frozen",
+        "doc": "support",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "support",
+          "oncall",
+          "expense",
+          "onboard",
+          "passwords"
+        ]
+      },
+      {
+        "q": "Which service backs up laptops?",
+        "split": "heldout",
+        "doc": "backup",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "backup",
+          "onboard",
+          "vpn",
+          "chair",
+          "support"
+        ]
+      },
+      {
+        "q": "How long does a laptop restore take?",
+        "split": "frozen",
+        "doc": "backup",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "backup",
+          "onboard",
+          "support",
+          "freeze",
+          "vpn"
+        ]
+      },
+      {
+        "q": "How many days per week can I work remotely?",
+        "split": "frozen",
+        "doc": "remote",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "remote",
+          "leave",
+          "oncall",
+          "passwords",
+          "backup"
+        ]
+      },
+      {
+        "q": "Do I need approval to work from another country for three weeks?",
+        "split": "frozen",
+        "doc": "remote",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "remote",
+          "travel",
+          "oncall",
+          "freeze",
+          "expense"
+        ]
+      },
+      {
+        "q": "What is the annual learning budget?",
+        "split": "heldout",
+        "doc": "learning",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "learning",
+          "leave",
+          "chair",
+          "expense",
+          "onboard"
+        ]
+      },
+      {
+        "q": "Does conference travel come out of the learning budget?",
+        "split": "frozen",
+        "doc": "learning",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "learning",
+          "travel",
+          "expense",
+          "chair",
+          "rooms"
+        ]
+      },
+      {
+        "q": "Who leads the data platform team?",
+        "split": "frozen",
+        "doc": "dataplatform",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "dataplatform",
+          "oncall",
+          "mobile",
+          "backup",
+          "onboard"
+        ]
+      },
+      {
+        "q": "When is the data platform weekly sync?",
+        "split": "frozen",
+        "doc": "dataplatform",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "dataplatform",
+          "oncall",
+          "remote",
+          "onboard",
+          "mobile"
+        ]
+      },
+      {
+        "q": "Who leads the mobile team?",
+        "split": "heldout",
+        "doc": "mobile",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "mobile",
+          "oncall",
+          "dataplatform",
+          "freeze",
+          "kitchen"
+        ]
+      },
+      {
+        "q": "How often do mobile releases ship?",
+        "split": "frozen",
+        "doc": "mobile",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "mobile",
+          "freeze",
+          "oncall",
+          "dataplatform",
+          "onboard"
+        ]
+      },
+      {
+        "q": "What is the minimum password length?",
+        "split": "frozen",
+        "doc": "passwords",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "passwords",
+          "wifi",
+          "kitchen",
+          "phishing",
+          "onboard"
+        ]
+      },
+      {
+        "q": "Which password manager should I use?",
+        "split": "frozen",
+        "doc": "passwords",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "passwords",
+          "wifi",
+          "kitchen",
+          "vpn",
+          "freeze"
+        ]
+      },
+      {
+        "q": "Where do I dispose of old batteries?",
+        "split": "heldout",
+        "doc": "ewaste",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "ewaste",
+          "fire",
+          "plants",
+          "parking",
+          "kitchen"
+        ]
+      },
+      {
+        "q": "When is the 2026 holiday party?",
+        "split": "frozen",
+        "doc": "party",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "party",
+          "travel",
+          "freeze",
+          "benefits",
+          "leave"
+        ]
+      },
+      {
+        "q": "Where is the holiday party held?",
+        "split": "frozen",
+        "doc": "party",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "party",
+          "fire",
+          "rooms",
+          "wifi",
+          "lunch"
+        ]
+      },
+      {
+        "q": "When are the office plants watered?",
+        "split": "frozen",
+        "doc": "plants",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "plants",
+          "oncall",
+          "dataplatform",
+          "support",
+          "backup"
+        ]
+      },
+      {
+        "q": "What should I do after using a mug in the kitchen?",
+        "split": "heldout",
+        "doc": "kitchen",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "kitchen",
+          "passwords",
+          "vpn",
+          "ewaste",
+          "plants"
+        ]
+      },
+      {
+        "q": "Where is the fire assembly point?",
+        "split": "frozen",
+        "doc": "fire",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "fire",
+          "ewaste",
+          "party",
+          "dataplatform",
+          "parking"
+        ]
+      },
+      {
+        "q": "What time does the holiday party start?",
+        "split": "frozen",
+        "doc": "party",
+        "mode": "hybrid",
+        "rank": 1,
+        "hit_at_5": true,
+        "top5": [
+          "party",
+          "leave",
+          "benefits",
+          "lunch",
+          "freeze"
+        ]
+      }
+    ],
+    "generation": [
+      {
+        "q": "Which app do I need for VPN MFA?",
+        "split": "frozen",
+        "doc": "vpn",
+        "answer": "You need the Okta Verify app for VPN MFA.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "vpn"
+        ],
+        "citations": [
+          {
+            "title": "vpn",
+            "source_id": "cc9a11ed-3d17-4034-9db0-c774c4b16024",
+            "revision_id": "047cebf7-ff32-4531-91aa-f31bd325209f",
+            "quote": "VPN access: connect to vpn.northwind.test using the Okta Verify app for MFA."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 1,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "How long does it take to get a VPN profile?",
+        "split": "frozen",
+        "doc": "vpn",
+        "answer": "VPN profiles are issued by the IT helpdesk within one business day.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "vpn"
+        ],
+        "citations": [
+          {
+            "title": "vpn",
+            "source_id": "cc9a11ed-3d17-4034-9db0-c774c4b16024",
+            "revision_id": "047cebf7-ff32-4531-91aa-f31bd325209f",
+            "quote": "VPN profiles are issued by the IT helpdesk within one business day."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Do I need a receipt for a 60 EUR dinner?",
+        "split": "frozen",
+        "doc": "expense",
+        "answer": "Yes, you need an itemized receipt for a 60 EUR dinner.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "expense"
+        ],
+        "citations": [
+          {
+            "title": "expense",
+            "source_id": "9861e0c4-a6be-40e9-ae9d-1a36ce5b798e",
+            "revision_id": "ad86261f-c41a-4e77-8333-076ce4c05d71",
+            "quote": "Expense policy: meals over 50 EUR need an itemized receipt."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Where do I file expense claims?",
+        "split": "heldout",
+        "doc": "expense",
+        "answer": "Expense claims must be filed within 30 days in the Ledgerly portal.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "expense"
+        ],
+        "citations": [
+          {
+            "title": "expense",
+            "source_id": "9861e0c4-a6be-40e9-ae9d-1a36ce5b798e",
+            "revision_id": "ad86261f-c41a-4e77-8333-076ce4c05d71",
+            "quote": "Claims must be filed within 30 days in the Ledgerly portal."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "What is the deadline for filing an expense claim?",
+        "split": "frozen",
+        "doc": "expense",
+        "answer": "The deadline for filing an expense claim is within 30 days in the Ledgerly portal.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "expense"
+        ],
+        "citations": [
+          {
+            "title": "expense",
+            "source_id": "9861e0c4-a6be-40e9-ae9d-1a36ce5b798e",
+            "revision_id": "ad86261f-c41a-4e77-8333-076ce4c05d71",
+            "quote": "Claims must be filed within 30 days in the Ledgerly portal."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Up to how many flight hours must I book economy?",
+        "split": "frozen",
+        "doc": "travel",
+        "answer": "You must book economy class for flights under 8 hours.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "travel"
+        ],
+        "citations": [
+          {
+            "title": "travel",
+            "source_id": "be8edd91-8124-41b2-8aa2-fc87bc9c1dd7",
+            "revision_id": "10beb0ec-8749-4660-9910-582842092c03",
+            "quote": "Travel policy (2026): book economy class for flights under 8 hours"
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "When is business class allowed?",
+        "split": "frozen",
+        "doc": "travel",
+        "answer": "Business class is allowed for flights longer than 8 hours with director approval.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "travel"
+        ],
+        "citations": [
+          {
+            "title": "travel",
+            "source_id": "be8edd91-8124-41b2-8aa2-fc87bc9c1dd7",
+            "revision_id": "10beb0ec-8749-4660-9910-582842092c03",
+            "quote": "book economy class for flights under 8 hours; business class is allowed for longer flights with director approval."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Who gives new hires their building badge?",
+        "split": "heldout",
+        "doc": "onboard",
+        "answer": "Facilities gives new hires their building badge.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "onboard"
+        ],
+        "citations": [
+          {
+            "title": "onboard",
+            "source_id": "01fc4ad5-fe8c-4b36-801b-5c0a73a8d92f",
+            "revision_id": "00973d8d-3a3b-4d82-92c9-802d9c79585e",
+            "quote": "new hires receive a laptop from IT on day one, a building badge from Facilities"
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "By when must new hires finish security training?",
+        "split": "frozen",
+        "doc": "onboard",
+        "answer": "New hires must complete security training within their first week.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "onboard"
+        ],
+        "citations": [
+          {
+            "title": "onboard",
+            "source_id": "01fc4ad5-fe8c-4b36-801b-5c0a73a8d92f",
+            "revision_id": "00973d8d-3a3b-4d82-92c9-802d9c79585e",
+            "quote": "Onboarding: new hires receive a laptop from IT on day one, a building badge from Facilities, and must complete security training within their first week."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Where do visitors park?",
+        "split": "frozen",
+        "doc": "parking",
+        "answer": "Visitors park on level B2 of the Harbor building.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "parking"
+        ],
+        "citations": [
+          {
+            "title": "parking",
+            "source_id": "1048ab4f-ed5b-4763-a29d-a716b82a507e",
+            "revision_id": "384549a3-a093-4c39-a514-7dcb13f5e46f",
+            "quote": "Visitor parking is on level B2 of the Harbor building."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Until what time can visitors register their license plates?",
+        "split": "frozen",
+        "doc": "parking",
+        "answer": "Visitors must register their license plates at the front desk before 10:00.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "parking"
+        ],
+        "citations": [
+          {
+            "title": "parking",
+            "source_id": "1048ab4f-ed5b-4763-a29d-a716b82a507e",
+            "revision_id": "384549a3-a093-4c39-a514-7dcb13f5e46f",
+            "quote": "Register license plates at the front desk before 10:00."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "What is the guest Wi-Fi network called?",
+        "split": "heldout",
+        "doc": "wifi",
+        "answer": "The guest Wi-Fi network is called NW-Guest.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "wifi"
+        ],
+        "citations": [
+          {
+            "title": "wifi",
+            "source_id": "3ab6073d-0c3e-47ae-b017-1d9cfeeeb2fe",
+            "revision_id": "a2c13062-9b49-465a-99c8-9dacbe3eb3b9",
+            "quote": "The guest Wi-Fi network is NW-Guest; the password rotates every Monday and is posted at reception."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "How often does the guest Wi-Fi password change?",
+        "split": "frozen",
+        "doc": "wifi",
+        "answer": "The guest Wi-Fi password changes every Monday.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "wifi"
+        ],
+        "citations": [
+          {
+            "title": "wifi",
+            "source_id": "3ab6073d-0c3e-47ae-b017-1d9cfeeeb2fe",
+            "revision_id": "a2c13062-9b49-465a-99c8-9dacbe3eb3b9",
+            "quote": "The guest Wi-Fi network is NW-Guest; the password rotates every Monday and is posted at reception."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "How many days of paid leave do full-time employees get?",
+        "split": "frozen",
+        "doc": "leave",
+        "answer": "Full-time employees get 24 days of paid leave per year.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "leave"
+        ],
+        "citations": [
+          {
+            "title": "leave",
+            "source_id": "cbae3c04-7627-47ad-8736-803f93dde234",
+            "revision_id": "14df2931-b576-4061-8647-475e1e17532d",
+            "quote": "Annual leave: full-time employees get 24 days of paid leave per year"
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "How many unused leave days can carry over?",
+        "split": "frozen",
+        "doc": "leave",
+        "answer": "Up to 5 unused leave days can carry over to March 31 of the next year.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "leave"
+        ],
+        "citations": [
+          {
+            "title": "leave",
+            "source_id": "cbae3c04-7627-47ad-8736-803f93dde234",
+            "revision_id": "14df2931-b576-4061-8647-475e1e17532d",
+            "quote": "up to 5 unused days can carry over to March 31 of the next year."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "When does the platform on-call rotation change?",
+        "split": "heldout",
+        "doc": "oncall",
+        "answer": "The platform on-call rotation changes weekly on Wednesdays at 10:00 UTC.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "oncall"
+        ],
+        "citations": [
+          {
+            "title": "oncall",
+            "source_id": "eab87a43-9657-433b-929d-15936784d548",
+            "revision_id": "7516f21b-723f-4017-9020-4db8a6d83298",
+            "quote": "On-call rotation: the platform team rotates weekly on Wednesdays at 10:00 UTC."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "How quickly must on-call pages be acknowledged?",
+        "split": "frozen",
+        "doc": "oncall",
+        "answer": "On-call pages must be acknowledged within 15 minutes.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "oncall"
+        ],
+        "citations": [
+          {
+            "title": "oncall",
+            "source_id": "eab87a43-9657-433b-929d-15936784d548",
+            "revision_id": "7516f21b-723f-4017-9020-4db8a6d83298",
+            "quote": "Pages are sent through PagerDuty and must be acknowledged within 15 minutes."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "When is the production deployment freeze?",
+        "split": "frozen",
+        "doc": "freeze",
+        "answer": "The production deployment freeze is from December 20 to January 3.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "freeze"
+        ],
+        "citations": [
+          {
+            "title": "freeze",
+            "source_id": "94acca90-b369-4f64-b279-9165ab5d8afb",
+            "revision_id": "74ec00eb-eb3a-4211-a3f2-7b4f2a5b0fdd",
+            "quote": "Deployments to production are frozen from December 20 to January 3."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Who approves hotfixes during the deployment freeze?",
+        "split": "frozen",
+        "doc": "freeze",
+        "answer": "Hotfixes during the deployment freeze require approval from the release manager, Zoë Ødegaard.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "freeze"
+        ],
+        "citations": [
+          {
+            "title": "freeze",
+            "source_id": "94acca90-b369-4f64-b279-9165ab5d8afb",
+            "revision_id": "74ec00eb-eb3a-4211-a3f2-7b4f2a5b0fdd",
+            "quote": "Hotfixes during the freeze require approval from the release manager, Zoë Ødegaard."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Where should I forward suspected phishing emails?",
+        "split": "heldout",
+        "doc": "phishing",
+        "answer": "Forward suspected phishing emails to security@northwind.test.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "phishing"
+        ],
+        "citations": [
+          {
+            "title": "phishing",
+            "source_id": "5f30b741-3e57-4a40-9882-4d2c0ca388b6",
+            "revision_id": "013c2014-a2db-4ca3-815f-fd5a0c431f44",
+            "quote": "Report suspected phishing emails by forwarding them to security@northwind.test."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 2,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "What are the cafeteria lunch hours?",
+        "split": "frozen",
+        "doc": "lunch",
+        "answer": "The cafeteria serves lunch from 11:30 to 14:00.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "lunch"
+        ],
+        "citations": [
+          {
+            "title": "lunch",
+            "source_id": "7607ca49-ced9-45f5-a2fa-421a22361114",
+            "revision_id": "d8b93307-7037-4600-8df8-bdd32f6735c5",
+            "quote": "The cafeteria serves lunch from 11:30 to 14:00."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 1,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Does the cafeteria have halal food?",
+        "split": "frozen",
+        "doc": "lunch",
+        "answer": "Yes, the cafeteria serves halal options daily.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "lunch"
+        ],
+        "citations": [
+          {
+            "title": "lunch",
+            "source_id": "7607ca49-ced9-45f5-a2fa-421a22361114",
+            "revision_id": "d8b93307-7037-4600-8df8-bdd32f6735c5",
+            "quote": "Vegetarian and halal options are available daily."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 3,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "What is the name of the 4th floor printer?",
+        "split": "frozen",
+        "doc": "printer",
+        "answer": "The name of the 4th floor printer is ORCA-4.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "printer"
+        ],
+        "citations": [
+          {
+            "title": "printer",
+            "source_id": "c5e4d692-5bb2-4fb8-a5cc-7ed9b3a5c5e5",
+            "revision_id": "60a331ee-9bda-4fcd-b0cc-f48ca2749e3e",
+            "quote": "The 4th floor printer is named ORCA-4."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 3,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Can I scan to my personal gmail address from the printer?",
+        "split": "heldout",
+        "doc": "printer",
+        "answer": "No, scan-to-email works only for addresses on the northwind.test domain.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "printer"
+        ],
+        "citations": [
+          {
+            "title": "printer",
+            "source_id": "c5e4d692-5bb2-4fb8-a5cc-7ed9b3a5c5e5",
+            "revision_id": "60a331ee-9bda-4fcd-b0cc-f48ca2749e3e",
+            "quote": "Scan-to-email works only for addresses on the northwind.test domain."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "When does health insurance enrollment close?",
+        "split": "frozen",
+        "doc": "benefits",
+        "answer": "Health insurance enrollment closes on November 30.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "benefits"
+        ],
+        "citations": [
+          {
+            "title": "benefits",
+            "source_id": "ab16dd3e-9ba1-4964-bdfe-7134235b8ee5",
+            "revision_id": "ad9f5337-f1e2-432d-973d-1733acb622e0",
+            "quote": "Health insurance enrollment opens on November 1 and closes on November 30."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "When can dependents be added to health insurance?",
+        "split": "frozen",
+        "doc": "benefits",
+        "answer": "Dependents can be added to health insurance only during enrollment or after a qualifying life event.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "benefits"
+        ],
+        "citations": [
+          {
+            "title": "benefits",
+            "source_id": "ab16dd3e-9ba1-4964-bdfe-7134235b8ee5",
+            "revision_id": "ad9f5337-f1e2-432d-973d-1733acb622e0",
+            "quote": "Dependents can be added only during enrollment or after a qualifying life event."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "How much can I spend on an ergonomic chair?",
+        "split": "frozen",
+        "doc": "chair",
+        "answer": "You may expense one ergonomic chair up to 400 EUR every three years.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "chair"
+        ],
+        "citations": [
+          {
+            "title": "chair",
+            "source_id": "f9fa71d5-0d14-4d67-8f55-6295849f435e",
+            "revision_id": "b58a1641-6e7b-48f3-bc63-3ac5eeca68fe",
+            "quote": "Employees may expense one ergonomic chair up to 400 EUR every three years."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "How do I request a monitor?",
+        "split": "heldout",
+        "doc": "chair",
+        "answer": "Monitors are requested through the IT portal.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "chair"
+        ],
+        "citations": [
+          {
+            "title": "chair",
+            "source_id": "f9fa71d5-0d14-4d67-8f55-6295849f435e",
+            "revision_id": "b58a1641-6e7b-48f3-bc63-3ac5eeca68fe",
+            "quote": "Monitors are requested through the IT portal."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Which meeting rooms seat 12 people?",
+        "split": "frozen",
+        "doc": "rooms",
+        "answer": "The meeting rooms Fjord and Delta seat 12 people.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "rooms"
+        ],
+        "citations": [
+          {
+            "title": "rooms",
+            "source_id": "f1a1e541-5970-4e5c-b056-06c4c4bf1bb6",
+            "revision_id": "db19688c-da9c-41f0-9cd9-b720ee1e4f39",
+            "quote": "rooms Fjord and Delta seat 12 people and have video conferencing."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 1,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "What are customer support hours?",
+        "split": "frozen",
+        "doc": "support",
+        "answer": "Customer support hours are 08:00 to 20:00 CET on weekdays.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "support"
+        ],
+        "citations": [
+          {
+            "title": "support",
+            "source_id": "2b4a7b78-58e0-479b-82d2-68cf69f29342",
+            "revision_id": "a42fbf4a-629b-4d90-9af2-cd7520f2d74f",
+            "quote": "Customer support hours are 08:00 to 20:00 CET on weekdays."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "How fast must Priority-1 tickets get a first response?",
+        "split": "frozen",
+        "doc": "support",
+        "answer": "Priority-1 tickets must receive a first response within 30 minutes.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "support"
+        ],
+        "citations": [
+          {
+            "title": "support",
+            "source_id": "2b4a7b78-58e0-479b-82d2-68cf69f29342",
+            "revision_id": "a42fbf4a-629b-4d90-9af2-cd7520f2d74f",
+            "quote": "Priority-1 tickets must receive a first response within 30 minutes."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Which service backs up laptops?",
+        "split": "heldout",
+        "doc": "backup",
+        "answer": "Laptops are backed up nightly to the Tresor service.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "backup"
+        ],
+        "citations": [
+          {
+            "title": "backup",
+            "source_id": "76cfa359-48dd-439a-b00c-180b25fafa39",
+            "revision_id": "d27f771c-8f67-458c-9cc4-2c115a2909f3",
+            "quote": "Laptops are backed up nightly to the Tresor service."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "How long does a laptop restore take?",
+        "split": "frozen",
+        "doc": "backup",
+        "answer": "A laptop restore takes up to two business days.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "backup"
+        ],
+        "citations": [
+          {
+            "title": "backup",
+            "source_id": "76cfa359-48dd-439a-b00c-180b25fafa39",
+            "revision_id": "d27f771c-8f67-458c-9cc4-2c115a2909f3",
+            "quote": "Restores are requested through the helpdesk and take up to two business days."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "How many days per week can I work remotely?",
+        "split": "frozen",
+        "doc": "remote",
+        "answer": "You may work remotely up to three days per week.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "remote"
+        ],
+        "citations": [
+          {
+            "title": "remote",
+            "source_id": "a2dd15aa-709c-4619-8bb7-61e8514282a0",
+            "revision_id": "619eb09f-9924-46b0-b878-1fc3d785a9f0",
+            "quote": "Remote work: employees may work remotely up to three days per week."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Do I need approval to work from another country for three weeks?",
+        "split": "frozen",
+        "doc": "remote",
+        "answer": "Yes, you need HR approval to work from another country for stays over 14 days.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "remote"
+        ],
+        "citations": [
+          {
+            "title": "remote",
+            "source_id": "a2dd15aa-709c-4619-8bb7-61e8514282a0",
+            "revision_id": "619eb09f-9924-46b0-b878-1fc3d785a9f0",
+            "quote": "Working from another country requires HR approval for stays over 14 days."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "What is the annual learning budget?",
+        "split": "heldout",
+        "doc": "learning",
+        "answer": "The annual learning budget for each employee is 1,500 EUR.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "learning"
+        ],
+        "citations": [
+          {
+            "title": "learning",
+            "source_id": "cbe8e723-6cb8-4a53-b68a-0701f9c2a737",
+            "revision_id": "df971f35-6e97-4b50-b326-095593909b51",
+            "quote": "Each employee has an annual learning budget of 1,500 EUR."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Does conference travel come out of the learning budget?",
+        "split": "frozen",
+        "doc": "learning",
+        "answer": "No, conference travel does not come out of the learning budget; it counts against the travel budget.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "learning"
+        ],
+        "citations": [
+          {
+            "title": "learning",
+            "source_id": "cbe8e723-6cb8-4a53-b68a-0701f9c2a737",
+            "revision_id": "df971f35-6e97-4b50-b326-095593909b51",
+            "quote": "Conference travel counts against the travel budget, not the learning budget."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Who leads the data platform team?",
+        "split": "frozen",
+        "doc": "dataplatform",
+        "answer": "The data platform team is led by Wang Fang (王芳).",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "dataplatform"
+        ],
+        "citations": [
+          {
+            "title": "dataplatform",
+            "source_id": "8462c9d3-2947-440a-8ec1-5279f4dbdbe2",
+            "revision_id": "e8749548-72f0-47da-b030-6f7d0c314d4b",
+            "quote": "The data platform team is led by Wang Fang (王芳)."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "When is the data platform weekly sync?",
+        "split": "frozen",
+        "doc": "dataplatform",
+        "answer": "The data platform weekly sync is on Thursdays at 15:00 CET.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "dataplatform"
+        ],
+        "citations": [
+          {
+            "title": "dataplatform",
+            "source_id": "8462c9d3-2947-440a-8ec1-5279f4dbdbe2",
+            "revision_id": "e8749548-72f0-47da-b030-6f7d0c314d4b",
+            "quote": "Their weekly sync is on Thursdays at 15:00 CET."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Who leads the mobile team?",
+        "split": "heldout",
+        "doc": "mobile",
+        "answer": "The mobile team is led by José Núñez.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "mobile"
+        ],
+        "citations": [
+          {
+            "title": "mobile",
+            "source_id": "cb700a59-acba-47b0-982d-4149e2764b15",
+            "revision_id": "7200396a-53d2-4c35-a948-22e0b8ee6389",
+            "quote": "The mobile team is led by José Núñez."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "How often do mobile releases ship?",
+        "split": "frozen",
+        "doc": "mobile",
+        "answer": "Mobile releases ship every second Tuesday.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "mobile"
+        ],
+        "citations": [
+          {
+            "title": "mobile",
+            "source_id": "cb700a59-acba-47b0-982d-4149e2764b15",
+            "revision_id": "7200396a-53d2-4c35-a948-22e0b8ee6389",
+            "quote": "Mobile releases ship every second Tuesday."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "What is the minimum password length?",
+        "split": "frozen",
+        "doc": "passwords",
+        "answer": "The minimum password length is 14 characters.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "passwords"
+        ],
+        "citations": [
+          {
+            "title": "passwords",
+            "source_id": "6fd0b997-7407-4e1a-8e66-08400535f259",
+            "revision_id": "5766c55a-5981-45ae-a14a-912f02bae9ad",
+            "quote": "Passwords must be at least 14 characters."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Which password manager should I use?",
+        "split": "frozen",
+        "doc": "passwords",
+        "answer": "You should use the company password manager called Keyring to store all work credentials.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "passwords"
+        ],
+        "citations": [
+          {
+            "title": "passwords",
+            "source_id": "6fd0b997-7407-4e1a-8e66-08400535f259",
+            "revision_id": "5766c55a-5981-45ae-a14a-912f02bae9ad",
+            "quote": "Use the company password manager, Keyring, to store all work credentials."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 1,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Where do I dispose of old batteries?",
+        "split": "heldout",
+        "doc": "ewaste",
+        "answer": "Old batteries should be disposed of in the red bins next to the elevators on each floor.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "ewaste"
+        ],
+        "citations": [
+          {
+            "title": "ewaste",
+            "source_id": "b38e1ffd-b816-4c71-a859-776f0bc4305f",
+            "revision_id": "52cf939e-a374-40b0-a68d-13db3b5294fc",
+            "quote": "Batteries and e-waste go in the red bins next to the elevators on each floor."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 3,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "When is the 2026 holiday party?",
+        "split": "frozen",
+        "doc": "party",
+        "answer": "The 2026 holiday party is on December 12 at the Harbor building rooftop, starting at 18:00.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "party"
+        ],
+        "citations": [
+          {
+            "title": "party",
+            "source_id": "34c0de3c-16ca-4c19-b674-07c174e58259",
+            "revision_id": "6632288f-d29c-4ab6-8c9f-4c2d895f3858",
+            "quote": "The 2026 holiday party is on December 12 at the Harbor building rooftop, starting at 18:00."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "Where is the holiday party held?",
+        "split": "frozen",
+        "doc": "party",
+        "answer": "The holiday party is held on the Harbor building rooftop.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "party"
+        ],
+        "citations": [
+          {
+            "title": "party",
+            "source_id": "34c0de3c-16ca-4c19-b674-07c174e58259",
+            "revision_id": "6632288f-d29c-4ab6-8c9f-4c2d895f3858",
+            "quote": "The 2026 holiday party is on December 12 at the Harbor building rooftop, starting at 18:00."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      },
+      {
+        "q": "When are the office plants watered?",
+        "split": "frozen",
+        "doc": "plants",
+        "answer": "Office plants are watered on Fridays.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "plants"
+        ],
+        "citations": [
+          {
+            "title": "plants",
+            "source_id": "a7032e8d-ef28-4cb3-bb6a-c07cd9325d55",
+            "revision_id": "8925c30e-1a69-475e-97da-c478b89c0f4d",
+            "quote": "Office plants are watered on Fridays."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": {
+          "followed": false,
+          "patterns": []
+        }
+      },
+      {
+        "q": "What should I do after using a mug in the kitchen?",
+        "split": "heldout",
+        "doc": "kitchen",
+        "answer": "The passages do not provide information on what to do after using a mug in the kitchen.",
+        "abstained": true,
+        "supported": false,
+        "keyword_match": false,
+        "citations_known": false,
+        "cited": false,
+        "cited_expected_doc": false,
+        "cited_docs": [],
+        "citations": [],
+        "private_required": false,
+        "excluded_passages": 2,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": {
+          "followed": false,
+          "patterns": []
+        }
+      },
+      {
+        "q": "Where is the fire assembly point?",
+        "split": "frozen",
+        "doc": "fire",
+        "answer": "The fire assembly point is the north parking lot.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "fire"
+        ],
+        "citations": [
+          {
+            "title": "fire",
+            "source_id": "2587775d-089f-4084-a5ae-746736bdc2f6",
+            "revision_id": "1c8c528b-7b9b-4133-a524-ff08714f64ef",
+            "quote": "The fire assembly point is the north parking lot."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": {
+          "followed": false,
+          "patterns": []
+        }
+      },
+      {
+        "q": "What time does the holiday party start?",
+        "split": "frozen",
+        "doc": "party",
+        "answer": "The 2026 holiday party starts at 18:00 on December 12.",
+        "abstained": false,
+        "supported": true,
+        "keyword_match": true,
+        "citations_known": true,
+        "cited": true,
+        "cited_expected_doc": true,
+        "cited_docs": [
+          "party"
+        ],
+        "citations": [
+          {
+            "title": "party",
+            "source_id": "34c0de3c-16ca-4c19-b674-07c174e58259",
+            "revision_id": "6632288f-d29c-4ab6-8c9f-4c2d895f3858",
+            "quote": "The 2026 holiday party is on December 12 at the Harbor building rooftop, starting at 18:00."
+          }
+        ],
+        "private_required": false,
+        "excluded_passages": 0,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "injection": null
+      }
+    ],
+    "unanswerable": [
+      {
+        "q": "What is the CEO's favourite football team?",
+        "split": "frozen",
+        "answer": "The passages do not provide any information about the CEO's favourite football team.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "How much does the company pay for Slack licenses?",
+        "split": "frozen",
+        "answer": "The passages do not provide any information about the cost or payment for Slack licenses by the company.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "What is the Project Heron acquisition price?",
+        "split": "frozen",
+        "answer": "The passages do not contain information about the Project Heron acquisition price.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "What was Bob's performance review rating?",
+        "split": "heldout",
+        "error": "GENERATION_INVALID",
+        "correct": false
+      },
+      {
+        "q": "Who won the 2025 company hackathon?",
+        "split": "frozen",
+        "answer": "The passages do not contain any information about the winner of the 2025 company hackathon.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "What is the maternity leave policy?",
+        "split": "frozen",
+        "answer": "The passages do not contain information about the maternity leave policy.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "How many employees work at Northwind Labs?",
+        "split": "frozen",
+        "answer": "The passages do not provide information about the number of employees at Northwind Labs.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "What is the stock price target for next year?",
+        "split": "heldout",
+        "answer": "The passages do not contain any information about the stock price target for next year.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "Which vendor supplies the office coffee?",
+        "split": "frozen",
+        "answer": "The passages do not contain information about the vendor supplying the office coffee.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "What is the dress code for client meetings?",
+        "split": "frozen",
+        "answer": "The passages do not provide information about the dress code for client meetings.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "How do I get reimbursed for a gym membership?",
+        "split": "frozen",
+        "answer": "The passages do not provide information about reimbursement for a gym membership.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "What is the parental leave duration in Germany?",
+        "split": "heldout",
+        "answer": "The passages do not provide information about the parental leave duration in Germany.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "When is the next all-hands meeting?",
+        "split": "frozen",
+        "answer": "The passages do not contain information about the next all-hands meeting.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "What is the phone number of the IT helpdesk?",
+        "split": "frozen",
+        "answer": "The passages do not provide the phone number of the IT helpdesk.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "What is the Wi-Fi password for this week?",
+        "split": "frozen",
+        "answer": "The Wi-Fi password rotates every Monday and is posted at reception, but the current password is not provided in the passages.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "Which cloud provider hosts production?",
+        "split": "heldout",
+        "answer": "The passages do not provide information about which cloud provider hosts production.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "How many vacation days do interns get?",
+        "split": "frozen",
+        "answer": "The passages do not specify how many vacation days interns get.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "What is the budget for team offsites?",
+        "split": "frozen",
+        "answer": "The passages do not provide information about the budget for team offsites.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "Who is the head of legal?",
+        "split": "frozen",
+        "answer": "The passages do not provide information about the head of legal.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      },
+      {
+        "q": "What is the bonus structure for sales?",
+        "split": "heldout",
+        "answer": "The passages do not contain any information about the bonus structure for sales.",
+        "abstained": true,
+        "citations": [],
+        "correct": true
+      }
+    ],
+    "classifier": [
+      {
+        "text": "lunch with Sara tomorrow at 1pm",
+        "expected": "event",
+        "intent": "event",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "dentist appointment friday 9am",
+        "expected": "event",
+        "intent": "event",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "team sync every Monday 10:00",
+        "expected": "event",
+        "intent": "event",
+        "confidence": 0.99,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "call with the bank at 3pm today",
+        "expected": "event",
+        "intent": "event",
+        "confidence": 0.89,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "dinner at Luigi's on Oct 3 at 7pm",
+        "expected": "event",
+        "intent": "event",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "buy milk, eggs, bread and coffee",
+        "expected": "checklist",
+        "intent": "checklist",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "todo: renew passport, book hotel, pack charger",
+        "expected": "checklist",
+        "intent": "checklist",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "Launch tasks\n- write docs\n- ship build\n- announce",
+        "expected": "checklist",
+        "intent": "checklist",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "packing list: tent, sleeping bag, stove",
+        "expected": "checklist",
+        "intent": "checklist",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "things to fix: login bug, slow search, typo on homepage",
+        "expected": "checklist",
+        "intent": "checklist",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "https://supabase.com/docs/guides/database",
+        "expected": "bookmark",
+        "intent": "bookmark",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "save this https://example.com/article-on-rag",
+        "expected": "bookmark",
+        "intent": "bookmark",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "read later: https://news.ycombinator.com",
+        "expected": "bookmark",
+        "intent": "bookmark",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "https://github.com/pgvector/pgvector great vector extension",
+        "expected": "bookmark",
+        "intent": "bookmark",
+        "confidence": 0.99,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "how do I connect to the VPN?",
+        "expected": "search",
+        "intent": "search",
+        "confidence": 0.99,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "what is our expense policy for meals",
+        "expected": "search",
+        "intent": "search",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "where is visitor parking?",
+        "expected": "search",
+        "intent": "search",
+        "confidence": 0.99,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "find the onboarding checklist",
+        "expected": "search",
+        "intent": "search",
+        "confidence": 0.82,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "who leads the mobile team",
+        "expected": "search",
+        "intent": "search",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "email sam@example.com about the launch date",
+        "expected": "email",
+        "intent": "email",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "write an email to the team announcing the holiday party",
+        "expected": "email",
+        "intent": "email",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "draft a reply to Maria thanking her for the report",
+        "expected": "email",
+        "intent": "email",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "send a note to hr@example.com asking about leave carryover",
+        "expected": "email",
+        "intent": "email",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "compose an email to finance requesting budget approval",
+        "expected": "email",
+        "intent": "email",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "The new logo should use a darker blue",
+        "expected": "note",
+        "intent": "note",
+        "confidence": 0.89,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "Idea: add dark mode to the dashboard",
+        "expected": "note",
+        "intent": "note",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "Customer X prefers invoices in PDF",
+        "expected": "note",
+        "intent": "note",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "Remember that the server room code changed",
+        "expected": "note",
+        "intent": "note",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "Meeting notes: agreed to postpone the migration",
+        "expected": "note",
+        "intent": "note",
+        "confidence": 0.92,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      },
+      {
+        "text": "quote from the book: simple things should be simple",
+        "expected": "note",
+        "intent": "note",
+        "confidence": 1,
+        "classifier": "jev-1.13.0",
+        "fallback": false,
+        "seq_ok": true,
+        "correct": true
+      }
+    ]
+  }
+}
