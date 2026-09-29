@@ -37,7 +37,7 @@ assert.equal((await api(null, "intent", { workspace_id: team, text: "x", request
 assert.equal((await api(null, "ingest-worker", {}, "wrong")).status, 401);
 const cfg = await api(null, "google-config");
 assert.equal(cfg.status, 200);
-step(`auth boundaries (google configured=${cfg.data.configured})`);
+step(`auth boundaries (google refresh_enabled=${cfg.data.refresh_enabled})`);
 
 const intent = await api(alice, "intent", { workspace_id: team, text: "standup tomorrow at 9:30am", request_seq: 3 });
 assert.equal(intent.status, 200);

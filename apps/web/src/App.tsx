@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { GOOGLE_SIGNIN_CLIENT_ID, PASSWORD_AUTH, supabase } from "./lib/supabase.ts";
-import { renderGoogleButton } from "./lib/google.ts";
+import { GOOGLE_AUTH, PASSWORD_AUTH, supabase } from "./lib/supabase.ts";
+import { signInWithGoogle } from "./lib/google.ts";
 import { Shell } from "./components/Shell.tsx";
 
 export function App() {
@@ -17,18 +17,15 @@ export function App() {
 }
 
 function SignIn() {
-  const btn = useRef<HTMLDivElement>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [mode, setMode] = useState<"in" | "up">("in");
 
-  useEffect(() => {
-    if (!GOOGLE_SIGNIN_CLIENT_ID || !btn.current) return;
-    renderGoogleButton(btn.current, GOOGLE_SIGNIN_CLIENT_ID, async (token, nonce) => {
-      const { error } = await supabase.auth.signInWithIdToken({ provider: "google", token, nonce });
-      if (error) setError("Google sign-in failed. Try again.");
-    }).catch(() => setError("Google sign-in is unavailable."));
-  }, []);
+  async function google() {
+    setError("");
+    const { error } = await signInWithGoogle();
+    if (error) setError("Google sign-in is unavailable. Ask the operator to enable the Google provider in Supabase Auth.");
+  }
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -49,7 +46,7 @@ function SignIn() {
     <main className="signin">
       <h1>ShapeShift Workspace</h1>
       <p className="muted">Type anything. Get the right card. Search what your team knows.</p>
-      {GOOGLE_SIGNIN_CLIENT_ID && <div ref={btn} aria-label="Sign in with Google" />}
+      {GOOGLE_AUTH && <button onClick={google}>Continue with Google</button>}
       {PASSWORD_AUTH && (
         <form onSubmit={submit} className="stack">
           <label>Email <input name="email" type="email" required autoComplete="email" /></label>
@@ -60,7 +57,7 @@ function SignIn() {
           </button>
         </form>
       )}
-      {!GOOGLE_SIGNIN_CLIENT_ID && !PASSWORD_AUTH && <p>No sign-in method is configured. Set VITE_GOOGLE_CLIENT_ID.</p>}
+      {!GOOGLE_AUTH && !PASSWORD_AUTH && <p>No sign-in method is configured.</p>}
       {error && <p role="alert" className="error">{error}</p>}
     </main>
   );

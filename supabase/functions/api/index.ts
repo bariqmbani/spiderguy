@@ -40,8 +40,7 @@ const routes: Record<string, Handler> = {
     return runWorker(16, 40_000);
   },
   "google-config": async () => google.publicConfig(),
-  "google-connect": userRoute(google.connect),
-  "google-callback": userRoute(google.callback),
+  "google-session-connect": userRoute(google.sessionConnect),
   "google-picker-token": userRoute((ctx) => google.pickerToken(ctx)),
   "google-import": userRoute(google.driveImport),
   "google-disconnect": userRoute((ctx) => google.disconnect(ctx)),

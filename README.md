@@ -60,7 +60,7 @@ pnpm dev                                         # http://localhost:5173
 
 Create a user with **Sign up** in the app. Email/password sign-in is enabled by `VITE_ENABLE_PASSWORD_AUTH=true` and is for development only. Local email confirmations are off. A personal workspace is created automatically. Invitations require the invitee's verified email to match.
 
-Generate secrets with `openssl rand -hex 32` (`WORKER_TOKEN`) and `openssl rand -base64 32` (`TOKEN_ENCRYPTION_KEY`, which must decode to 32 bytes). If the Google variables are empty, the app shows Google features as not configured.
+Generate secrets with `openssl rand -hex 32` (`WORKER_TOKEN`) and `openssl rand -base64 32` (`TOKEN_ENCRYPTION_KEY`, which must decode to 32 bytes). If the Google provider is not enabled in Supabase Auth, Google sign-in and connect fail at the redirect; set `VITE_ENABLE_GOOGLE_AUTH=false` to hide the button. Without `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, the Google tab warns that connections last about an hour.
 
 ## Tests and checks
 
@@ -79,23 +79,24 @@ node --env-file=.env.hosted scripts/smoke-hosted.mjs   # hosted smoke: SUPABASE_
 2. **Function:** `supabase functions deploy api --no-verify-jwt` (or MCP `deploy_edge_function` with `verify_jwt=false`). Every route authenticates itself (see [API contracts](docs/API_CONTRACTS.md)).
 3. **Secrets:** use the names in [supabase/functions/.env.example](supabase/functions/.env.example): `TYPESAFE_API_KEY`, `JEV_MODEL`, `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL`, `EMBEDDING_BASE_URL`, `EMBEDDING_API_KEY`, `EMBEDDING_MODEL`, `EMBEDDING_DIMENSIONS`, `WORKER_TOKEN`, `TOKEN_ENCRYPTION_KEY`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_API_KEY`, `GOOGLE_APP_ID`. Set them with `supabase secrets set --env-file supabase/functions/.env`. Or, if you have no CLI access, store them in Vault (`select vault.create_secret('<value>', '<NAME>');`). The function reads the environment first, then Vault, via the service-role-only `svc_secret` RPC, which only accepts these names. You can generate secrets inside SQL (e.g. `encode(extensions.gen_random_bytes(32), 'base64')`) so they never leave the server.
 4. **Scheduler:** add Vault secrets `WORKER_URL` = `https://<ref>.supabase.co/functions/v1/api/ingest-worker` and `WORKER_TOKEN`. pg_cron calls the worker every 20 s, but only when there are claimable jobs. Where pg_cron/pg_net are unavailable, any scheduler can POST to that URL with `Authorization: Bearer <WORKER_TOKEN>`.
-5. **Web:** build with `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, optional `VITE_GOOGLE_CLIENT_ID`, and `VITE_ENABLE_PASSWORD_AUTH=false` outside development. Serve `apps/web/dist` as a static SPA with a CSP.
+5. **Web:** build with `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_ENABLE_GOOGLE_AUTH` (default `true`; shows "Continue with Google"), and `VITE_ENABLE_PASSWORD_AUTH=false` outside development. Serve `apps/web/dist` as a static SPA with a CSP.
 6. **Hardening:** enable leaked-password protection in the Supabase dashboard. Review the security advisor. The `authenticated_security_definer_function_executable` warnings are expected for the narrow RPCs.
 
 ### Google setup (not yet live-verified)
 
-1. In a Google Cloud project, enable the Drive API, Gmail API, Google Calendar API, and Google Picker API.
-2. Configure the OAuth consent screen with scopes `openid`, `email`, `https://www.googleapis.com/auth/drive.file`, `https://www.googleapis.com/auth/gmail.compose`, and `https://www.googleapis.com/auth/calendar.events.owned`. `gmail.compose` is a restricted scope, so a production audience requires Google verification.
-3. Create an OAuth **Web** client. Add the app origin to the authorized JavaScript origins. The code flow uses `redirect_uri=postmessage`.
-4. Create an API key restricted to the Picker API. `GOOGLE_APP_ID` is the Cloud project number.
-5. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_API_KEY`, and `GOOGLE_APP_ID` server-side. Set `VITE_GOOGLE_CLIENT_ID` for the web build.
-6. For Google sign-in, enable the Supabase Auth Google provider with the same client ID. The web app uses GIS plus `signInWithIdToken` with a hashed nonce.
+Both sign-in and Drive/Gmail/Calendar authorization use **Supabase Auth's Google provider** (one Google OAuth client, configured in Supabase). These operator steps cannot be done through MCP.
 
-Each capability is connected separately with incremental consent. Refresh tokens are AES-GCM encrypted in `private.google_credentials`. Only Gmail **drafts** and primary-calendar events without attendees are created, and only after explicit confirmation.
+1. **Google Cloud:** enable the Drive API, Gmail API, Google Calendar API, and Google Picker API. Configure the OAuth consent screen (add test users while in testing) with scopes `openid`, `email`, `https://www.googleapis.com/auth/drive.file`, `https://www.googleapis.com/auth/gmail.compose`, and `https://www.googleapis.com/auth/calendar.events.owned`. `gmail.compose` is a restricted scope, so a production audience requires Google verification.
+2. **OAuth Web client:** authorized redirect URI `https://<ref>.supabase.co/auth/v1/callback` (dev project: `https://fisunsjziipgdqxfdfhf.supabase.co/auth/v1/callback`; local: `http://127.0.0.1:54321/auth/v1/callback`).
+3. **Supabase Dashboard:** Authentication > Providers > Google: enable with the Web client ID/secret. Authentication > URL configuration: set the Site URL and redirect URLs for the deployed SPA. Enable **Allow manual linking** (needed to link Google to a password account). Enable leaked-password protection.
+4. **Function secrets (env or Vault):** `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` of the same client, for background refresh and token audience checks. Without them, access lasts about one hour and then returns `RECONNECT_REQUIRED`. Optionally `GOOGLE_API_KEY` (restricted to the Picker API) and `GOOGLE_APP_ID` (Cloud project number) for Picker.
+5. **Local:** `supabase/config.toml` has `[auth.external.google]` (disabled by default; set `enabled = true` and export `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID`/`SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET`), `site_url = http://127.0.0.1:5173`, redirect URLs for `127.0.0.1:5173` and `localhost:5173`, and `enable_manual_linking = true`.
+
+Each capability is connected separately with incremental consent (`access_type=offline`, `prompt=consent`, `include_granted_scopes=true`). After the redirect, the browser posts the provider tokens once to `google-session-connect` and then refreshes its Supabase session so the stored session no longer carries them (see ADR-0001 for this trade-off). Tokens are AES-GCM encrypted in `private.google_credentials`. Only Gmail **drafts** and primary-calendar events without attendees are created, and only after explicit confirmation.
 
 ## Security notes
 
-- The browser holds only public configuration. Provider keys, Google secrets and tokens, `WORKER_TOKEN`, and the service-role key stay in function env or Vault. The built bundle has been scanned for secrets.
+- The browser holds only public configuration. Provider keys, Google client secret, stored Google tokens, `WORKER_TOKEN`, and the service-role key stay in function env or Vault. Exception: Google provider tokens pass through the browser once after consent before being handed to the server (ADR-0001). The built bundle has been scanned for secrets.
 - All browser table access is SELECT under RLS. Writes go through narrow `SECURITY DEFINER` RPCs that check `auth.uid()` and live membership. `svc_*`/`worker_*` RPCs are granted only to `service_role`. Search runs `SECURITY INVOKER` under the user's JWT.
 - New content is private. Admins cannot read members' private content. Removal takes effect on the next request even with an unexpired JWT.
 - LLM output is schema-validated. Citations must quote retrieved passages exactly. Recipients come only from user input. Classifier output only selects UI.

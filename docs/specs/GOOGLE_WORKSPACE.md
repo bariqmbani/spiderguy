@@ -2,11 +2,17 @@
 
 ## Identity and connections
 
-Use Google Identity Services (GIS) sign-in and exchange the verified Google ID token through Supabase `signInWithIdToken` to obtain the app session. Preserve nonce checking and configure valid audience/origins. This respects a Google SDK frontend while leaving session ownership with Supabase. The ID token is not a Google API access token.
+Sign-in and Google API authorization both use Supabase Auth's Google provider (ADR-0001 deviation 10; user instruction). Google sign-in is `signInWithOAuth({provider:'google'})` with a redirect back to the SPA (preserving `?invite=`). Supabase owns the session and handles OAuth state/PKCE. The Supabase session is application authorization; a Google token is never used as one.
 
-Connect Drive/Gmail/Calendar separately through GIS authorization-code flow. A server-created, one-use state binds the user, requested capability, callback/origin, and ten-minute expiry. Edge Function callback validates state and exact redirect URI, exchanges code server-side, and validates the Google subject against the app user's Google identity. Reject account mismatch. Follow GIS code-flow CSRF/origin guidance and use PKCE where supported by the selected documented flow; do not assume browser sign-in provides a refresh token.
+Connect Drive/Gmail/Calendar separately with incremental consent:
 
-Keep refresh/access tokens encrypted with an operator-managed key outside DB backups, key version recorded. Only server functions can decrypt. Serialize token refresh per connection, preserve the old refresh token when Google omits a new one, and mark invalid_grant as reconnect_required. Do not assume Supabase refreshes Google credentials. Request offline access using the supported flow when required; missing offline credentials results in a clear reconnect prompt.
+1. The SPA records the pending capability and current app user ID in `sessionStorage` (no tokens), then calls `linkIdentity` (if the user has no Google identity yet; requires Supabase manual linking) or `signInWithOAuth` with exactly one capability scope, `access_type=offline`, `prompt=consent`, `include_granted_scopes=true`, and `redirectTo ?google_connect=<capability>`.
+2. On return, the SPA requires the query capability to match the pending one and the returned session user to be the same app user, then POSTs `provider_token` and `provider_refresh_token` once to `google-session-connect` and immediately calls `refreshSession()` so the stored session no longer carries them.
+3. The server validates the access token with Google `tokeninfo`, requires `aud`/`azp` to equal `GOOGLE_CLIENT_ID` when configured, requires `sub` to equal the user's linked Supabase Google identity (`ACCOUNT_MISMATCH` otherwise), and requires the capability scope (`SCOPE_DENIED` otherwise). A different Google subject while a connection is active is also rejected.
+
+Accepted trade-off: provider tokens are briefly present in the browser's Supabase session before hand-off. Do not log or persist them elsewhere in the client.
+
+Keep refresh/access tokens encrypted with an operator-managed key outside DB backups, key version recorded. Only server functions can decrypt. Serialize token refresh per connection, preserve the old refresh token when Google omits a new one, and mark invalid_grant as reconnect_required. Supabase does not refresh Google provider tokens; the server refreshes them with `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` of the same OAuth client configured in Supabase. Without those secrets (or without a refresh token), access lasts about one hour and then returns `RECONNECT_REQUIRED` with a clear reconnect prompt.
 
 ## Capability and scope contract
 

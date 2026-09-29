@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { rpcMessage, supabase } from "../lib/supabase.ts";
+import { api, ApiError, rpcMessage, supabase } from "../lib/supabase.ts";
+import { takeGoogleConnectResult } from "../lib/google.ts";
 import { Composer } from "./Composer.tsx";
 import { CardList } from "./CardList.tsx";
 import { Knowledge } from "./Knowledge.tsx";
@@ -31,6 +32,20 @@ export function Shell({ session }: { session: Session }) {
   useEffect(() => {
     (async () => {
       await supabase.rpc("ensure_bootstrap");
+      const connect = await takeGoogleConnectResult();
+      if (connect && "error" in connect) setNotice(connect.error);
+      else if (connect) {
+        try {
+          const r = await api<{ email: string; refresh: boolean }>("google-session-connect", {
+            capability: connect.capability, access_token: connect.accessToken, refresh_token: connect.refreshToken,
+          });
+          setNotice(`Google ${connect.capability} connected as ${r.email}.${r.refresh ? "" : " Access lasts about an hour; reconnect when prompted."}`);
+        } catch (e) {
+          setNotice(e instanceof ApiError ? e.message : "Google connection failed.");
+        }
+        // A refreshed session no longer carries the Google provider tokens in browser storage.
+        await supabase.auth.refreshSession();
+      }
       const token = new URLSearchParams(location.search).get("invite");
       if (token) {
         history.replaceState(null, "", location.pathname);
@@ -104,7 +119,7 @@ function WorkspaceView({ workspace, userId, role, onDirty, onWorkspacesChanged }
       </div>
       {tab === "knowledge" && <Knowledge workspace={workspace} userId={userId} initialQuery={query} />}
       {tab === "team" && <Team workspace={workspace} userId={userId} role={role} onChanged={onWorkspacesChanged} />}
-      {tab === "google" && <GooglePanel />}
+      {tab === "google" && <GooglePanel userId={userId} />}
     </main>
   );
 }

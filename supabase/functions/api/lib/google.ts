@@ -11,7 +11,6 @@ export const SCOPES = {
   calendar: "https://www.googleapis.com/auth/calendar.events.owned",
 } as const;
 type Capability = keyof typeof SCOPES;
-const capabilitySchema = z.object({ capability: z.enum(["drive", "gmail", "calendar"]) }).strict();
 
 const b64 = (b: Uint8Array) => btoa(String.fromCharCode(...b));
 const unb64 = (s: string) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
@@ -21,7 +20,6 @@ async function sha256(s: string | Uint8Array): Promise<Uint8Array> {
   return new Uint8Array(await crypto.subtle.digest("SHA-256", data as BufferSource));
 }
 const hex = (b: Uint8Array) => [...b].map((x) => x.toString(16).padStart(2, "0")).join("");
-const byteaHex = (b: Uint8Array) => `\\x${hex(b)}`;
 
 async function cipherKey(): Promise<CryptoKey> {
   const raw = unb64(await requireSecret("TOKEN_ENCRYPTION_KEY", "Google token encryption"));
@@ -53,18 +51,8 @@ async function gfetch(url: string, init: RequestInit & { timeoutMs?: number } = 
 }
 
 export async function publicConfig() {
-  const clientId = await secret("GOOGLE_CLIENT_ID");
-  return { configured: !!clientId && !!(await secret("GOOGLE_CLIENT_SECRET")), client_id: clientId, api_key: await secret("GOOGLE_API_KEY"), app_id: await secret("GOOGLE_APP_ID") };
-}
-
-export async function connect(ctx: Ctx, body: unknown) {
-  const { capability } = parseWith(capabilitySchema, body);
-  await rateLimit(ctx, "google");
-  const clientId = await requireSecret("GOOGLE_CLIENT_ID", "Google integration");
-  const state = b64url(crypto.getRandomValues(new Uint8Array(32)));
-  const { error } = await admin.rpc("svc_oauth_state_create", { p_user_id: ctx.user.id, p_capability: capability, p_state_hash: byteaHex(await sha256(state)) });
-  if (error) throw dbError(error);
-  return { client_id: clientId, scope: `openid email ${SCOPES[capability]}`, state, capability };
+  const refresh = !!(await secret("GOOGLE_CLIENT_ID")) && !!(await secret("GOOGLE_CLIENT_SECRET"));
+  return { refresh_enabled: refresh, api_key: await secret("GOOGLE_API_KEY"), app_id: await secret("GOOGLE_APP_ID") };
 }
 
 async function tokenRequest(params: Record<string, string>) {
@@ -77,38 +65,41 @@ async function tokenRequest(params: Record<string, string>) {
   return { status: res.status, body };
 }
 
-const callbackSchema = z.object({ code: z.string().min(10).max(2048), state: z.string().min(20).max(200) }).strict();
+const sessionConnectSchema = z.object({
+  capability: z.enum(["drive", "gmail", "calendar"]),
+  access_token: z.string().min(10).max(4096),
+  refresh_token: z.string().min(10).max(1024).nullable().optional(),
+}).strict();
 
-export async function callback(ctx: Ctx, body: unknown) {
-  const req = parseWith(callbackSchema, body);
-  const { data: capability, error } = await admin.rpc("svc_oauth_state_consume", { p_user_id: ctx.user.id, p_state_hash: byteaHex(await sha256(req.state)) });
-  if (error) throw dbError(error);
-  if (!capability) throw new HttpError(400, "INVALID_STATE", "authorization request expired or was already used; start again");
-  const clientId = await requireSecret("GOOGLE_CLIENT_ID", "Google integration");
-  const tok = await tokenRequest({
-    code: req.code, client_id: clientId, client_secret: await requireSecret("GOOGLE_CLIENT_SECRET", "Google integration"),
-    redirect_uri: "postmessage", grant_type: "authorization_code",
+/**
+ * Stores Google provider tokens obtained through Supabase Auth's Google provider.
+ * The token must belong to this user's linked Google identity, be issued to our client, and include the capability scope.
+ */
+export async function sessionConnect(ctx: Ctx, body: unknown) {
+  const req = parseWith(sessionConnectSchema, body);
+  await rateLimit(ctx, "google");
+  const info = await gfetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${encodeURIComponent(req.access_token)}`);
+  const t = await info.json().catch(() => ({})) as Record<string, string>;
+  if (info.status !== 200 || !t.sub) throw new HttpError(400, "GOOGLE_DENIED", "Google access token is invalid or expired");
+  const clientId = await secret("GOOGLE_CLIENT_ID");
+  if (clientId && t.aud !== clientId && t.azp !== clientId) throw new HttpError(400, "GOOGLE_DENIED", "token was not issued to this application");
+  const identity = ctx.user.identities?.find((i) => i.provider === "google");
+  const sub = (identity?.identity_data?.sub as string | undefined) ?? identity?.id;
+  if (!sub || sub !== t.sub) throw new HttpError(409, "ACCOUNT_MISMATCH", "that Google account is not linked to your sign-in");
+  const granted = String(t.scope ?? "").split(" ").filter((s) => s.startsWith("https://"));
+  if (!granted.includes(SCOPES[req.capability])) {
+    throw new HttpError(403, "SCOPE_DENIED", `the ${req.capability} permission was not granted; that feature stays disabled`);
+  }
+  const { data: connectionId, error } = await admin.rpc("svc_google_store", {
+    p_user_id: ctx.user.id, p_subject: t.sub, p_email: t.email ?? String(identity?.identity_data?.email ?? ""), p_scopes: granted,
+    p_refresh_ct: await seal(req.refresh_token), p_access_ct: await seal(req.access_token),
+    p_access_expires_at: new Date(Date.now() + Number(t.expires_in ?? 600) * 1000).toISOString(), p_key_version: 1,
   });
-  if (tok.status !== 200 || !tok.body.access_token) throw new HttpError(400, "GOOGLE_DENIED", "Google did not grant access");
-  const granted = String(tok.body.scope ?? "").split(" ");
-  if (!granted.includes(SCOPES[capability as Capability])) {
-    throw new HttpError(403, "SCOPE_DENIED", `the ${capability} permission was not granted; that feature stays disabled`);
+  if (error) {
+    if (error.message?.includes("ACCOUNT_MISMATCH")) throw new HttpError(409, "ACCOUNT_MISMATCH", "disconnect the current Google account before connecting a different one");
+    throw dbError(error);
   }
-  const info = await gfetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(String(tok.body.id_token ?? ""))}`);
-  const claims = await info.json().catch(() => ({})) as Record<string, string>;
-  if (info.status !== 200 || claims.aud !== clientId || !claims.sub || claims.email_verified !== "true") {
-    throw new HttpError(400, "GOOGLE_DENIED", "could not verify the Google account");
-  }
-  const { data: connectionId, error: e2 } = await admin.rpc("svc_google_store", {
-    p_user_id: ctx.user.id, p_subject: claims.sub, p_email: claims.email, p_scopes: granted.filter((s) => s.startsWith("https://")),
-    p_refresh_ct: await seal(tok.body.refresh_token as string | undefined), p_access_ct: await seal(String(tok.body.access_token)),
-    p_access_expires_at: new Date(Date.now() + Number(tok.body.expires_in ?? 3000) * 1000).toISOString(), p_key_version: 1,
-  });
-  if (e2) {
-    if (e2.message?.includes("ACCOUNT_MISMATCH")) throw new HttpError(409, "ACCOUNT_MISMATCH", "disconnect the current Google account before connecting a different one");
-    throw dbError(e2);
-  }
-  return { connection_id: connectionId, email: claims.email, capability };
+  return { connection_id: connectionId, email: t.email, capability: req.capability, refresh: !!req.refresh_token && !!clientId };
 }
 
 type Creds = { connection_id: string; email: string; scopes: string[]; status: string; version: number; refresh_ct: string | null; access_ct: string | null; access_expires_at: string | null };
@@ -124,13 +115,14 @@ export async function accessToken(userId: string, capability: Capability): Promi
     if (creds.access_ct && creds.access_expires_at && Date.parse(creds.access_expires_at) > Date.now() + 60_000) {
       return { token: await open(creds.access_ct), creds };
     }
-    if (!creds.refresh_ct) {
+    const clientId = await secret("GOOGLE_CLIENT_ID");
+    const clientSecret = await secret("GOOGLE_CLIENT_SECRET");
+    if (!creds.refresh_ct || !clientId || !clientSecret) {
       await admin.rpc("svc_google_set_status", { p_user_id: userId, p_status: "reconnect_required" });
-      throw new HttpError(409, "RECONNECT_REQUIRED", "reconnect your Google account");
+      throw new HttpError(409, "RECONNECT_REQUIRED", "Google access expired; reconnect in the Google tab");
     }
     const tok = await tokenRequest({
-      client_id: await requireSecret("GOOGLE_CLIENT_ID", "Google integration"),
-      client_secret: await requireSecret("GOOGLE_CLIENT_SECRET", "Google integration"),
+      client_id: clientId, client_secret: clientSecret,
       refresh_token: await open(creds.refresh_ct), grant_type: "refresh_token",
     });
     if (tok.body.error === "invalid_grant") {

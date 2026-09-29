@@ -1,5 +1,7 @@
-// Google Identity Services and Picker helpers. Access tokens stay in memory only.
+// Google access goes through Supabase Auth's Google provider; provider tokens are handed to the server once, then dropped.
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { supabase } from "./supabase.ts";
+
 declare global {
   interface Window {
     google?: any;
@@ -7,59 +9,70 @@ declare global {
   }
 }
 
+export const SCOPES = {
+  drive: "https://www.googleapis.com/auth/drive.file",
+  gmail: "https://www.googleapis.com/auth/gmail.compose",
+  calendar: "https://www.googleapis.com/auth/calendar.events.owned",
+} as const;
+export type Capability = keyof typeof SCOPES;
+const PENDING = "google_connect_pending";
+
+export async function signInWithGoogle() {
+  return supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: location.origin + location.pathname + location.search, queryParams: { prompt: "select_account" } },
+  });
+}
+
+/** Incremental consent for one capability. Links Google to the current user when it is not linked yet. */
+export async function connectGoogle(capability: Capability, userId: string) {
+  sessionStorage.setItem(PENDING, JSON.stringify({ capability, userId }));
+  const options = {
+    scopes: SCOPES[capability],
+    redirectTo: `${location.origin}${location.pathname}?google_connect=${capability}`,
+    queryParams: { access_type: "offline", prompt: "consent", include_granted_scopes: "true" },
+  };
+  const { data } = await supabase.auth.getUser();
+  const linked = data.user?.identities?.some((i) => i.provider === "google");
+  if (!linked) {
+    const { error } = await supabase.auth.linkIdentity({ provider: "google", options });
+    if (!error) return;
+  }
+  const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options });
+  if (error) throw error;
+}
+
+/** After the OAuth redirect: returns the pending capability and provider tokens, or null. */
+export async function takeGoogleConnectResult(): Promise<
+  { capability: Capability; accessToken: string; refreshToken: string | null } | { error: string } | null
+> {
+  const params = new URLSearchParams(location.search);
+  const cap = params.get("google_connect") as Capability | null;
+  if (!cap) return null;
+  history.replaceState(null, "", location.pathname);
+  const pending = JSON.parse(sessionStorage.getItem(PENDING) ?? "null") as { capability: string; userId: string } | null;
+  sessionStorage.removeItem(PENDING);
+  const { data } = await supabase.auth.getSession();
+  const s = data.session;
+  if (!pending || pending.capability !== cap || !(cap in SCOPES)) return { error: "Unexpected Google connection response; try again." };
+  if (!s?.provider_token) return { error: "Google did not return access; try connecting again." };
+  if (s.user.id !== pending.userId) return { error: "You chose a Google account that belongs to a different app user. Sign out and back in, then retry." };
+  return { capability: cap, accessToken: s.provider_token, refreshToken: s.provider_refresh_token ?? null };
+}
+
 const loaded = new Map<string, Promise<void>>();
 function loadScript(src: string): Promise<void> {
   if (!loaded.has(src)) {
     loaded.set(src, new Promise((resolve, reject) => {
-      const s = document.createElement("script");
-      s.src = src;
-      s.async = true;
-      s.onload = () => resolve();
-      s.onerror = () => reject(new Error(`failed to load ${src}`));
-      document.head.appendChild(s);
+      const el = document.createElement("script");
+      el.src = src;
+      el.async = true;
+      el.onload = () => resolve();
+      el.onerror = () => reject(new Error(`failed to load ${src}`));
+      document.head.appendChild(el);
     }));
   }
   return loaded.get(src)!;
-}
-
-export const loadGis = () => loadScript("https://accounts.google.com/gsi/client");
-
-async function sha256Hex(s: string) {
-  const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
-  return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-/** Renders the GIS sign-in button; the callback receives the ID token and the raw nonce for Supabase. */
-export async function renderGoogleButton(el: HTMLElement, clientId: string, onToken: (idToken: string, nonce: string) => void) {
-  await loadGis();
-  const nonce = crypto.randomUUID() + crypto.randomUUID();
-  window.google.accounts.id.initialize({
-    client_id: clientId,
-    nonce: await sha256Hex(nonce),
-    use_fedcm_for_prompt: true,
-    callback: (r: { credential: string }) => onToken(r.credential, nonce),
-  });
-  window.google.accounts.id.renderButton(el, { theme: "outline", size: "large", text: "signin_with" });
-}
-
-/** Incremental-consent authorization code flow (popup). Resolves with the one-time code. */
-export async function requestCode(clientId: string, scope: string, state: string): Promise<{ code: string; state: string }> {
-  await loadGis();
-  return new Promise((resolve, reject) => {
-    const client = window.google.accounts.oauth2.initCodeClient({
-      client_id: clientId,
-      scope,
-      state,
-      ux_mode: "popup",
-      include_granted_scopes: true,
-      callback: (r: { code?: string; state?: string; error?: string }) => {
-        if (r.error || !r.code) reject(new Error(r.error ?? "authorization canceled"));
-        else resolve({ code: r.code, state: r.state ?? "" });
-      },
-      error_callback: (e: { type?: string }) => reject(new Error(e?.type ?? "authorization canceled")),
-    });
-    client.requestCode();
-  });
 }
 
 /** Opens Google Picker restricted to Docs/TXT/Markdown; resolves with the chosen file ID or null. */

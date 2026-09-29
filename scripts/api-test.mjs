@@ -180,7 +180,11 @@ await test("summary of a private source requires private output; others get 404"
 
 await test("Google actions require a connection; worker route requires its credential", async () => {
   const cfg = await fetch(`${FN}/google-config`, { headers: { apikey: ANON } }).then((r) => r.json());
-  assert.equal(typeof cfg.data.configured, "boolean");
+  assert.equal(typeof cfg.data.refresh_enabled, "boolean");
+  const forged = await api(bob, "google-session-connect", { capability: "gmail", access_token: "ya29.not-a-real-token" });
+  assert.equal(forged.status, 400);
+  assert.equal(forged.error.code, "GOOGLE_DENIED");
+  assert.equal((await api(null, "google-session-connect", { capability: "gmail", access_token: "ya29.not-a-real-token" })).status, 401);
   const p = await api(bob, "action-prepare", { workspace_id: team, kind: "gmail_draft", idempotency_key: "k-12345678", payload: { to: ["sam@example.test"], subject: "Hi", body: "Hello" } });
   assert.equal(p.status, 409);
   assert.equal(p.error.code, "RECONNECT_REQUIRED");

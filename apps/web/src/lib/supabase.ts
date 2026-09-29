@@ -5,7 +5,7 @@ const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
 
 export const supabase = createClient(url, key, { auth: { persistSession: true, autoRefreshToken: true } });
 export const FUNCTIONS_URL = `${url}/functions/v1/api`;
-export const GOOGLE_SIGNIN_CLIENT_ID = (import.meta.env.VITE_GOOGLE_CLIENT_ID as string) || "";
+export const GOOGLE_AUTH = import.meta.env.VITE_ENABLE_GOOGLE_AUTH !== "false";
 export const PASSWORD_AUTH = import.meta.env.VITE_ENABLE_PASSWORD_AUTH === "true";
 
 export class ApiError extends Error {

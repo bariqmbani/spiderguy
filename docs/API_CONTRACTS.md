@@ -23,10 +23,9 @@ Success: `{data, request_id}`. Error: `{error:{code,message,retryable,details?},
 | ACCESS_CHANGED | 409 | evidence became unreadable/inactive during generation (recheck before return) |
 | RECONNECT_REQUIRED | 409 | no active Google connection, missing refresh token, `invalid_grant` |
 | SCOPE_REQUIRED | 403 | the connection lacks the capability's scope |
-| SCOPE_DENIED | 403 | consent returned without the requested scope; Gmail 403 on draft creation (recorded as action error) |
-| INVALID_STATE | 400 | OAuth state expired, already used, or bound to another user |
-| GOOGLE_DENIED | 400 | code exchange failed or ID token audience/subject/email verification failed |
-| ACCOUNT_MISMATCH | 409 | connecting a different Google subject while a connection is active |
+| SCOPE_DENIED | 403 | provider token lacks the requested capability scope; Gmail 403 on draft creation (recorded as action error) |
+| GOOGLE_DENIED | 400 | provider access token rejected by Google `tokeninfo`, or its `aud`/`azp` does not match `GOOGLE_CLIENT_ID` |
+| ACCOUNT_MISMATCH | 409 | token `sub` differs from the user's linked Supabase Google identity, or a different Google subject while a connection is active |
 | SOURCE_ACCESS_LOST | 404 | Drive file 403/404/trashed on import or refresh (source marked `unavailable`) |
 | UNSUPPORTED_TYPE, TOO_LARGE, EMPTY_CONTENT, TOO_MANY_CHARACTERS, INVALID_UTF8 | 422 | Drive import validation (upload RPCs raise the same prefixes via PT422; the worker records them as `error_code`) |
 | DATABASE_ERROR | 500 | unmapped PostgREST/SQL error (retryable) |
@@ -75,7 +74,7 @@ All RPCs are called at `/rest/v1/rpc/<name>` under the user's JWT. Browsers have
 | action_claim | p_action_id,p_payload_hash | See "Concurrency and external outcomes" |
 | consume_rate_limit | p_kind | per-user per-minute counter; used by Edge routes |
 
-Service-role-only RPCs (`svc_*`, `worker_*`) are not callable by `anon`/`authenticated`. The DB tests verify this: `svc_secret`, `svc_oauth_state_create/consume`, `svc_google_store/credentials/update_access/set_status`, `svc_drive_snapshot`, `svc_source_unavailable`, `svc_action_record`, `worker_claim_jobs/store_text/put_chunks/activate/fail`.
+Service-role-only RPCs (`svc_*`, `worker_*`) are not callable by `anon`/`authenticated`. The DB tests verify this: `svc_secret`, `svc_oauth_state_create/consume` (unused since the Supabase Auth Google flow), `svc_google_store/credentials/update_access/set_status`, `svc_drive_snapshot`, `svc_source_unavailable`, `svc_action_record`, `worker_claim_jobs/store_text/put_chunks/activate/fail`.
 
 ## Edge Function routes
 
@@ -89,9 +88,8 @@ A single function `api` (deployed with `verify_jwt=false`, see ADR-0001) serves 
 | generate | user + member | workspace_id,task answer/summary/email,instruction?,query?,source_ids?,draft_fields{to,cc?,tone?}? | answer/summary or `{to,cc,subject,body}` plus `citations,dependencies,private_required,model,prompt_version,excluded_passages`; `abstained` for answer/summary |
 | index-now | user | — | one bounded worker pass (≤4 jobs, 25 s): `{processed,ready,retried,failed,stale}` |
 | ingest-worker | `Bearer WORKER_TOKEN` (constant-time compare) | — | bounded pass (≤16 jobs, 40 s), sanitized counts |
-| google-config | none | — | `{configured,client_id,api_key,app_id}` (public Picker/GIS config only) |
-| google-connect | user | capability drive/gmail/calendar | `{client_id,scope:'openid email <scope>',state,capability}`; state stored hashed, 10 min, one use |
-| google-callback | user | code,state (GIS popup code flow, `redirect_uri=postmessage`) | `{connection_id,email,capability}`; verifies granted scope, ID-token `aud`/`sub`/`email_verified`; tokens AES-GCM encrypted at rest |
+| google-config | none | — | `{refresh_enabled,api_key,app_id}`; `refresh_enabled` is true when `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set (public Picker config only) |
+| google-session-connect | user | capability drive/gmail/calendar, access_token, refresh_token? (Supabase OAuth session `provider_token`/`provider_refresh_token`; strict schema) | `{connection_id,email,capability,refresh}`. Verifies the token via Google `tokeninfo` (else `GOOGLE_DENIED`), `aud`/`azp` = `GOOGLE_CLIENT_ID` when set, `sub` = linked Supabase Google identity (else `ACCOUNT_MISMATCH`), capability scope granted (else `SCOPE_DENIED`); tokens AES-GCM encrypted at rest. OAuth state/PKCE is handled by Supabase Auth. |
 | google-picker-token | user | — | `{access_token,expires_in}` for Picker only (drive scope required); client keeps it in memory |
 | google-import | user + member | workspace_id,file_id | private `drive_snapshot` source + queued revision, `snapshot:true,google_shared,imported_at` |
 | google-disconnect | user | — | revokes refresh token (best effort), deletes credentials, marks the user's Drive sources `unavailable`, cancels their jobs |
@@ -99,7 +97,7 @@ A single function `api` (deployed with `verify_jwt=false`, see ADR-0001) serves 
 | action-prepare | user | workspace_id,kind gmail_draft/calendar_event,payload,idempotency_key | `{action_id,payload_hash,expires_at,state,preview,account_email,destination}` |
 | action-execute | user | action_id,payload_hash | `{action_id,state,provider_resource_id,provider_link,error_code}`; state succeeded/failed/outcome_unknown/expired/executing |
 
-Google scopes: `drive.file`, `gmail.compose`, `calendar.events.owned`, each requested incrementally with `openid email`. Outbound Google calls go through a wrapper that only allows `https://*.googleapis.com` and rejects redirects. No Gmail send route exists.
+Google scopes: `drive.file`, `gmail.compose`, `calendar.events.owned`, each requested incrementally through Supabase Auth's Google provider (`access_type=offline`, `prompt=consent`, `include_granted_scopes=true`). Outbound Google calls go through a wrapper that only allows `https://*.googleapis.com` and rejects redirects. No Gmail send route exists.
 
 Upload staging and finalization are RPCs, not routes (see above). Worker scheduling: pg_cron `ingest-worker` every 20 s → `private.kick_worker()` → pg_net POST to `WORKER_URL` with `WORKER_TOKEN` from Vault, only when claimable jobs exist. The worker never accepts a user-selected actor or job payload.
 
